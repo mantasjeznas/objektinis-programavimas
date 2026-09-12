@@ -4,6 +4,8 @@
 #include <iomanip>
 using std::string;
 using std::vector;
+using std::cout;
+using std::cin;
 
 struct studentas{
     string vardas, pavarde;
@@ -11,39 +13,58 @@ struct studentas{
     int exam;
 };
 
-void printas( studentas &A);
+void printas(const studentas &A);
+double vidurkis(const studentas &A);
+double galutinis(const studentas &A);
 
 int main(){
     int k;
-    std::vector<studentas> grupe;
+    vector<studentas> grupe;
     studentas A;
-    std::cout<<"Kiek studentu yra sarase: ";
-    int n;
-    std::cin>>n;
+
+    cout<<"Kiek studentu yra sarase: "; int n; cin>>n;
+
     for (int j=0;j<n;j++){
-        std::cout<<"Įveskite per tarpa studento varda ir pavarde: ";
-        std::cin>>A.vardas>>A.pavarde;
-        std::cout<<"Įveskite semestro paz. kieki: ";std::cin>>k;
+        cout<<"Įveskite per tarpa studento varda ir pavarde: ";
+        cin>>A.vardas>>A.pavarde;
+        cout<<"Įveskite semestro paz. kieki: ";cin>>k;
         for (int i=0;i<k;i++){
-            //cin>>A.paz[i];
-            std::cout<<"Įveskite "<<i+1<<" paz: ";
+            cout<<"Įveskite "<<i+1<<" paz: ";
             int a;
-            std::cin>>a;
+            cin>>a;
             A.paz.push_back(a);
         }
-        std::cout<<"Įveskite semestro Egzamino paz.: ";std::cin>>A.exam;
+        cout<<"Įveskite semestro Egzamino paz.: ";cin>>A.exam;
+
         grupe.push_back(A);
         A.pavarde.clear();
         A.vardas.clear();
         A.paz.clear();
     }
 
-    std::cout<<"Studentu duom.: \n";
+    cout << std::left << std::setw(15) <<"Pavarde"<< std::left << std::setw(15) <<"Vardas"
+    <<"Galutinis (Vid.)\n"<< "-----------------------------------------------\n";
+
     for (studentas &B:grupe) printas(B);
+
+    return 0;
 }
 
-void printas( studentas &A){
-    std::cout<<"|"<<std::left<<std::setw(10)<<A.vardas<<"|"<<std::left<<std::setw(10)<<A.pavarde<<"|";
-    for (int p: A.paz) std::cout<<std::right<<std::setw(3)<<p<<"|";
-    std::cout<<std::right<<std::setw(5)<<A.exam<<"|\n";
+double vidurkis(const studentas &A) {
+    if (A.paz.empty()) return 0;
+    double suma = 0;
+    for (int p : A.paz){
+        suma += p;
+    }
+    return suma / A.paz.size();
+}
+
+double galutinis(const studentas &A) {
+    return 0.4 * vidurkis(A) + 0.6 * A.exam;
+}
+
+void printas(const studentas &A){
+    cout << std::left << std::setw(15) << A.pavarde
+    << std::left << std::setw(15) << A.vardas
+    << std::fixed << std::setprecision(2) << galutinis(A) << "\n";
 }
