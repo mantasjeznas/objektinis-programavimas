@@ -20,7 +20,6 @@ double mediana(const studentas &A);
 double galutinis(const studentas &A, bool ar_mediana);
 
 int main(){
-    int k;
     vector<studentas> grupe;
     studentas A;
 
@@ -29,12 +28,30 @@ int main(){
     for (int j=0;j<n;j++){
         cout<<"Įveskite per tarpa studento varda ir pavarde: ";
         cin>>A.vardas>>A.pavarde;
-        cout<<"Įveskite semestro paz. kieki: ";cin>>k;
-        for (int i=0;i<k;i++){
-            cout<<"Įveskite "<<i+1<<" paz: ";
-            int a;
-            cin>>a;
-            A.paz.push_back(a);
+        cin.ignore();
+
+        cout<<"Įveskite semestro paz. kieki: ";
+        string ivedimas;
+        getline(cin, ivedimas);
+
+        if (ivedimas.empty()){
+            int i = 0;
+            while(true){
+                cout << "Iveskite " << i + 1 << " paz: ";
+                getline(cin, ivedimas);
+                if (ivedimas.empty()) break;
+                A.paz.push_back(std::stoi(ivedimas));
+                i++;
+            }
+        } else{
+            int k = std::stoi(ivedimas);
+            for (int i = 0; i < k; i++){
+                cout << "Iveskite " << i + 1 << " paz: ";
+                int a;
+                cin >> a;
+                A.paz.push_back(a);
+            }
+            cin.ignore();
         }
         cout<<"Įveskite semestro Egzamino paz.: ";cin>>A.exam;
 
