@@ -3,6 +3,8 @@
 #include <vector>
 #include <iomanip>
 #include <algorithm>
+#include <limits>
+#include <stdexcept>
 using std::string;
 using std::vector;
 using std::cout;
@@ -14,6 +16,9 @@ struct studentas{
     int exam;
 };
 
+int skaicius_input();
+int pazymio_apribojimas();
+void ignoruoti_eilute(); // yra skaicius_input() viduje;
 void printas(const studentas &A, int pasirinkimas);
 double vidurkis(const studentas &A);
 double mediana(const studentas &A);
@@ -23,12 +28,17 @@ int main(){
     vector<studentas> grupe;
     studentas A;
 
-    cout<<"Kiek studentu yra sarase: "; int n; cin>>n;
+    cout<<"Kiek studentu yra sarase: ";
+    int n = skaicius_input();
+    while (n < 0) {
+        cout << "Skaicius negali buti neigiamas: ";
+        n = skaicius_input();
+    }
 
     for (int j=0;j<n;j++){
         cout<<"Įveskite per tarpa studento varda ir pavarde: ";
         cin>>A.vardas>>A.pavarde;
-        cin.ignore();
+        ignoruoti_eilute();
 
         cout<<"Įveskite semestro paz. kieki: ";
         string ivedimas;
@@ -40,20 +50,40 @@ int main(){
                 cout << "Iveskite " << i + 1 << " paz: ";
                 getline(cin, ivedimas);
                 if (ivedimas.empty()) break;
-                A.paz.push_back(std::stoi(ivedimas));
-                i++;
+                try{
+                    int paz = std::stoi(ivedimas);
+                    if (paz < 0 || paz > 10){
+                    cout << "Pazymys turi buti nuo 0 iki 10\n";
+                    continue;
+                    }
+                    A.paz.push_back(paz);
+                    i++;
+                } catch(const std::exception&){
+                    cout << "Klaida. Iveskite skaiciu\n";
+                }
             }
         } else{
-            int k = std::stoi(ivedimas);
+            int k;
+            try{
+                k = std::stoi(ivedimas);
+            } catch(const std::exception&){
+                cout << "Paz. ivedimas atsauktas(netinkama ivestis)\n";
+                j--;
+                continue;
+            }
+            if (k < 0){
+            cout << "ND kiekis negali buti neigiamas\n";
+            j--;
+            continue;
+            }
             for (int i = 0; i < k; i++){
                 cout << "Iveskite " << i + 1 << " paz: ";
-                int a;
-                cin >> a;
+                int a = pazymio_apribojimas();
                 A.paz.push_back(a);
             }
-            cin.ignore();
+            ignoruoti_eilute();
         }
-        cout<<"Įveskite semestro Egzamino paz.: ";cin>>A.exam;
+        cout<<"Įveskite semestro Egzamino paz.: "; A.exam = pazymio_apribojimas();
 
         grupe.push_back(A);
         A.pavarde.clear();
@@ -68,9 +98,9 @@ int main(){
     int pasirinkimas = 0;
     while (pasirinkimas != 1 && pasirinkimas != 2 && pasirinkimas != 3) {
         cout << "Pasirinkimas: \n";
-        cin >> pasirinkimas;
+        pasirinkimas = skaicius_input(); //
         if (pasirinkimas != 1 && pasirinkimas != 2 && pasirinkimas != 3){
-            cout << "neteisinga ivestis\n";
+            cout << "Tokio pasirinkimo nera\n";
         }
 }
 
@@ -86,6 +116,28 @@ int main(){
     for (studentas &B:grupe) printas(B, pasirinkimas);
 
     return 0;
+}
+
+int skaicius_input() {
+    int sk;
+    while (!(cin >> sk)) {
+        cout << "Netinkama ivestis. Iveskite skaiciu: ";
+        cin.clear();
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    return sk;
+}
+
+int pazymio_apribojimas() {
+    while (true) {
+        int x = skaicius_input();
+        if (x >= 0 && x <= 10) return x;
+        cout << "Pazymys turi buti nuo 0 iki 10: ";
+    }
+}
+
+void ignoruoti_eilute() {
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 double vidurkis(const studentas &A) {
