@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
+#include <cstdlib>
+#include <ctime>
 using std::string;
 using std::vector;
 using std::cout;
@@ -19,12 +21,14 @@ struct studentas{
 int skaicius_input();
 int pazymio_apribojimas();
 void ignoruoti_eilute(); // yra skaicius_input() viduje;
+int random_pazymys();
 void printas(const studentas &A, int pasirinkimas);
 double vidurkis(const studentas &A);
 double mediana(const studentas &A);
 double galutinis(const studentas &A, bool ar_mediana);
 
 int main(){
+    srand(time(nullptr));
     vector<studentas> grupe;
     studentas A;
 
@@ -35,12 +39,35 @@ int main(){
         n = skaicius_input();
     }
 
+    ignoruoti_eilute();
+
     for (int j=0;j<n;j++){
         cout<<"Įveskite per tarpa studento varda ir pavarde: ";
         cin>>A.vardas>>A.pavarde;
         ignoruoti_eilute();
 
+        cout << "1 - pazymius vesti ranka, 2 - generuoti atsitiktinai: ";
+        int rezimas = skaicius_input();
+        while (rezimas != 1 && rezimas != 2) {
+            cout << "Klaida. Iveskite 1 arba 2: ";
+            rezimas = skaicius_input();
+        }
+        ignoruoti_eilute();
+
         cout<<"Įveskite semestro paz. kieki: ";
+
+        if (rezimas == 2){
+            int k = skaicius_input();
+            while (k < 0){
+                cout << "ND kiekis negali buti neigiamas: ";
+                k = skaicius_input();
+            }
+            for (int i = 0; i < k; i++){
+                A.paz.push_back(random_pazymys());
+            }
+            A.exam = random_pazymys();
+            ignoruoti_eilute();
+        } else{
         string ivedimas;
         getline(cin, ivedimas);
 
@@ -83,8 +110,11 @@ int main(){
             }
             ignoruoti_eilute();
         }
-        cout<<"Įveskite semestro Egzamino paz.: "; A.exam = pazymio_apribojimas();
 
+        cout<<"Įveskite semestro Egzamino paz.: "; A.exam = pazymio_apribojimas();
+        ignoruoti_eilute();
+
+        }
         grupe.push_back(A);
         A.pavarde.clear();
         A.vardas.clear();
@@ -118,7 +148,7 @@ int main(){
     return 0;
 }
 
-int skaicius_input() {
+int skaicius_input(){
     int sk;
     while (!(cin >> sk)) {
         cout << "Netinkama ivestis. Iveskite skaiciu: ";
@@ -128,7 +158,7 @@ int skaicius_input() {
     return sk;
 }
 
-int pazymio_apribojimas() {
+int pazymio_apribojimas(){
     while (true) {
         int x = skaicius_input();
         if (x >= 0 && x <= 10) return x;
@@ -136,11 +166,15 @@ int pazymio_apribojimas() {
     }
 }
 
-void ignoruoti_eilute() {
+void ignoruoti_eilute(){
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-double vidurkis(const studentas &A) {
+int random_pazymys(){
+    return rand() % 11;
+}
+
+double vidurkis(const studentas &A){
     if (A.paz.empty()) return 0;
     double suma = 0;
     for (int p : A.paz){
@@ -149,7 +183,7 @@ double vidurkis(const studentas &A) {
     return suma / A.paz.size();
 }
 
-double mediana(const studentas &A) {
+double mediana(const studentas &A){
     if (A.paz.empty()) return 0;
     vector<int> laikinas = A.paz;
     std::sort(laikinas.begin(), laikinas.end());
@@ -158,7 +192,7 @@ double mediana(const studentas &A) {
     return (laikinas[n / 2 - 1] + laikinas[n / 2]) / 2.0;
 }
 
-double galutinis(const studentas &A, bool ar_mediana) {
+double galutinis(const studentas &A, bool ar_mediana){
     if (ar_mediana == true){
     return 0.4 * mediana(A) + 0.6 * A.exam;
     }
