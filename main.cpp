@@ -163,7 +163,9 @@ int main(){
             for (studentas &B:grupe) printas(B, pasirinkimas);
         }
         else if (meniu_veiksmas == 3){
-            string pav = "kursiokai.txt";
+            string pav;
+            cout << "Iveskite failo pav.: ";
+            cin >> pav;
             std::ifstream fd(pav);
             if (!fd){
                 cout << "\nFailas nerastas.\n";
