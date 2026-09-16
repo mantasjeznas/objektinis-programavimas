@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <sstream>
 using std::string;
 using std::vector;
 using std::cout;
@@ -37,6 +39,7 @@ int main(){
         cout << "\n=== Studentu DB ===\n"
         << "1. Pazymiu ivedimas\n"
         << "2. Rodyti rezultatus\n"
+        << "3. Nuskaityti duomenis is failo\n"
         << "0. Iseiti\n"
         << "Pasirinkimas: ";
         meniu_veiksmas = skaicius_input();
@@ -131,10 +134,10 @@ int main(){
         }
         else if (meniu_veiksmas == 2) {
             if (grupe.empty()) {
-                cout << "Nera studentu.\n";
+                cout << "\nNera studentu.\n";
                 continue;
             }
-    
+
             cout << "\nKaip skaiciuoti galutini bala?\n"
             <<"1 - pagal vidurki\n"
             <<"2 - pagal mediana\n"
@@ -152,12 +155,39 @@ int main(){
             if (pasirinkimas == 1) cout << "Galutinis (Vid.)\n";
             else if (pasirinkimas == 2) cout << "Galutinis (Med.)\n";
             else cout << std::left << std::setw(18) << "Galutinis (Vid.)" << "Galutinis (Med.)\n";
-            
+
             int linijos_ilgis = 47;
             if (pasirinkimas == 3) linijos_ilgis = 65;
             cout << string(linijos_ilgis, '-') << "\n";
 
             for (studentas &B:grupe) printas(B, pasirinkimas);
+        }
+        else if (meniu_veiksmas == 3){
+            string pav = "kursiokai.txt";
+            std::ifstream fd(pav);
+            if (!fd){
+                cout << "\nFailas nerastas.\n";
+                continue;
+            }
+
+            string eilute;
+            getline(fd, eilute);
+
+            while (getline(fd, eilute)){
+                std::stringstream ss(eilute);
+                ss >> A.pavarde >> A.vardas;
+
+                A.paz.clear();
+                int x;
+                while (ss >> x) A.paz.push_back(x);
+
+                if (A.paz.empty()) continue;
+                A.exam = A.paz.back();
+                A.paz.pop_back();
+                grupe.push_back(A);
+                A.paz.clear();
+            }
+            cout << "\nDuomenys nuskaityti is " << pav << ". Studentu sk: " <<grupe.size() << "\n";
         }
         else if (meniu_veiksmas != 0){
             cout << "\nTokio pasirinkimo nera!\n";
