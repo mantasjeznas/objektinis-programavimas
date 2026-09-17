@@ -24,7 +24,7 @@ int skaicius_input();
 int pazymio_apribojimas();
 void ignoruoti_eilute(); // yra skaicius_input() viduje;
 int random_pazymys();
-void printas(const studentas &A, int pasirinkimas);
+void printas(const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis);
 double vidurkis(const studentas &A);
 double mediana(const studentas &A);
 double galutinis(const studentas &A, bool ar_mediana);
@@ -166,16 +166,23 @@ int main(){
             if (rikiavimas == 1) std::sort(grupe.begin(), grupe.end(), pagal_varda);
             else std::sort(grupe.begin(), grupe.end(), pagal_pavarde);
 
-            cout << std::left << std::setw(15) <<"Pavarde"<< std::left << std::setw(15) <<"Vardas";
+            int pavardes_ilgis = 12;
+            int vardo_ilgis = 12;
+            for (const studentas &S : grupe){
+                if ((int)S.pavarde.size() + 2 > pavardes_ilgis) pavardes_ilgis = (int)S.pavarde.size() + 2;
+                if ((int)S.vardas.size() + 2 > vardo_ilgis) vardo_ilgis = (int)S.vardas.size() + 2;
+            }
+
+            cout << std::left << std::setw(pavardes_ilgis) << "Pavarde" << std::left << std::setw(vardo_ilgis) << "Vardas";
             if (pasirinkimas == 1) cout << "Galutinis (Vid.)\n";
             else if (pasirinkimas == 2) cout << "Galutinis (Med.)\n";
             else cout << std::left << std::setw(18) << "Galutinis (Vid.)" << "Galutinis (Med.)\n";
 
-            int linijos_ilgis = 47;
-            if (pasirinkimas == 3) linijos_ilgis = 65;
+            int linijos_ilgis = pavardes_ilgis + vardo_ilgis + 16;
+            if (pasirinkimas == 3) linijos_ilgis = pavardes_ilgis + vardo_ilgis + 34;
             cout << string(linijos_ilgis, '-') << "\n";
 
-            for (studentas &B:grupe) printas(B, pasirinkimas);
+            for (studentas &B:grupe) printas(B, pasirinkimas, pavardes_ilgis, vardo_ilgis);
         }
         else if (meniu_veiksmas == 3){
             string pav;
@@ -264,9 +271,9 @@ double galutinis(const studentas &A, bool ar_mediana){
     return 0.4 * vidurkis(A) + 0.6 * A.exam;
 }
 
-void printas(const studentas &A, int pasirinkimas){
-    cout << std::left << std::setw(15) << A.pavarde
-    << std::left << std::setw(15) << A.vardas
+void printas(const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis){
+    cout << std::left << std::setw(pavardes_ilgis) << A.pavarde
+    << std::left << std::setw(vardo_ilgis) << A.vardas
     << std::fixed << std::setprecision(2);
 
     if (pasirinkimas == 1){
