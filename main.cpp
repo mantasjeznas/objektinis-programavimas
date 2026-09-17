@@ -29,6 +29,7 @@ double vidurkis(const studentas &A);
 double mediana(const studentas &A);
 double galutinis(const studentas &A, bool ar_mediana);
 bool pagal_pavarde(const studentas &a, const studentas &b);
+bool pagal_varda(const studentas &a, const studentas &b);
 
 int main(){
     srand(time(nullptr));
@@ -151,7 +152,20 @@ int main(){
                     cout << "Tokio pasirinkimo nera\n";
                 }
             }
-            std::sort(grupe.begin(), grupe.end(), pagal_pavarde);
+
+            cout << "\nPagal ka rikiuoti?\n" << "1 - varda\n" << "2 - pavarde\n";
+            int rikiavimas = 0;
+            while (rikiavimas != 1 && rikiavimas != 2){
+                cout << "Pasirinkimas: ";
+                rikiavimas = skaicius_input();
+                if (rikiavimas != 1 && rikiavimas != 2){
+                    cout << "\nTokio pasirinkimo nera\n";
+                }
+            }
+
+            if (rikiavimas == 1) std::sort(grupe.begin(), grupe.end(), pagal_varda);
+            else std::sort(grupe.begin(), grupe.end(), pagal_pavarde);
+
             cout << std::left << std::setw(15) <<"Pavarde"<< std::left << std::setw(15) <<"Vardas";
             if (pasirinkimas == 1) cout << "Galutinis (Vid.)\n";
             else if (pasirinkimas == 2) cout << "Galutinis (Med.)\n";
@@ -267,4 +281,9 @@ void printas(const studentas &A, int pasirinkimas){
 bool pagal_pavarde(const studentas &a, const studentas &b){
     if (a.pavarde == b.pavarde) return a.vardas < b.vardas;
     return a.pavarde < b.pavarde;
+}
+
+bool pagal_varda(const studentas &a, const studentas &b){
+    if (a.vardas == b.vardas) return a.pavarde < b.pavarde;
+    return a.vardas < b.vardas;
 }
