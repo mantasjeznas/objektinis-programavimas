@@ -22,14 +22,15 @@ struct studentas{
 
 int skaicius_input();
 int pazymio_apribojimas();
-void ignoruoti_eilute(); // yra skaicius_input() viduje;
+void ignoruoti_eilute();
 int random_pazymys();
-void printas(const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis);
+void printas(std::ostream &out, const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis);
 double vidurkis(const studentas &A);
 double mediana(const studentas &A);
 double galutinis(const studentas &A, bool ar_mediana);
 bool pagal_pavarde(const studentas &a, const studentas &b);
 bool pagal_varda(const studentas &a, const studentas &b);
+void failo_generavimas(int stud_sk, const string &failo_pav);
 
 int main(){
     srand(time(nullptr));
@@ -42,6 +43,7 @@ int main(){
         << "1. Pazymiu ivedimas\n"
         << "2. Rodyti rezultatus\n"
         << "3. Nuskaityti duomenis is failo\n"
+        << "4. Failu generavimas\n"
         << "0. Iseiti\n"
         << "Pasirinkimas: ";
         meniu_veiksmas = skaicius_input();
@@ -120,7 +122,7 @@ int main(){
                             cout << "Iveskite " << i + 1 << " paz: ";
                             int a = pazymio_apribojimas();
                             A.paz.push_back(a);
-                        }   
+                        }
                         ignoruoti_eilute();
                     }
 
@@ -138,6 +140,26 @@ int main(){
             if (grupe.empty()) {
                 cout << "\nNera studentu.\n";
                 continue;
+            }
+
+            cout << "\nKur isvesti rezultatus?\n"
+            << "1 - i ekrana\n"
+            << "2 - i faila\n";
+            int kur = 0;
+            while (kur != 1 && kur != 2) {
+                cout << "Pasirinkimas: ";
+                kur = skaicius_input();
+                if (kur != 1 && kur != 2){
+                    cout << "Tokio pasirinkimo nera\n";
+                }
+            }
+            ignoruoti_eilute();
+
+            string pav;
+            if (kur == 2) {
+                cout << "Iveskite failo pav.: ";
+                cin >> pav;
+                ignoruoti_eilute();
             }
 
             cout << "\nKaip skaiciuoti galutini bala?\n"
@@ -173,16 +195,32 @@ int main(){
                 if ((int)S.vardas.size() + 2 > vardo_ilgis) vardo_ilgis = (int)S.vardas.size() + 2;
             }
 
-            cout << std::left << std::setw(pavardes_ilgis) << "Pavarde" << std::left << std::setw(vardo_ilgis) << "Vardas";
-            if (pasirinkimas == 1) cout << "Galutinis (Vid.)\n";
-            else if (pasirinkimas == 2) cout << "Galutinis (Med.)\n";
-            else cout << std::left << std::setw(18) << "Galutinis (Vid.)" << "Galutinis (Med.)\n";
+            std::ofstream fd;
+            std::ostream *out = &cout;
+            if (kur == 2) {
+                fd.open(pav);
+                if (!fd) {
+                    cout << "\nNepavyko sukurti failo.\n";
+                    continue;
+                }
+                out = &fd;
+            }
+
+            *out << std::left << std::setw(pavardes_ilgis) << "Pavarde" << std::left << std::setw(vardo_ilgis) << "Vardas";
+            if (pasirinkimas == 1) *out << "Galutinis (Vid.)\n";
+            else if (pasirinkimas == 2) *out << "Galutinis (Med.)\n";
+            else *out << std::left << std::setw(18) << "Galutinis (Vid.)" << "Galutinis (Med.)\n";
 
             int linijos_ilgis = pavardes_ilgis + vardo_ilgis + 16;
             if (pasirinkimas == 3) linijos_ilgis = pavardes_ilgis + vardo_ilgis + 34;
-            cout << string(linijos_ilgis, '-') << "\n";
+            *out << string(linijos_ilgis, '-') << "\n";
 
-            for (studentas &B:grupe) printas(B, pasirinkimas, pavardes_ilgis, vardo_ilgis);
+            for (studentas &B:grupe) printas(*out, B, pasirinkimas, pavardes_ilgis, vardo_ilgis);
+
+            if (kur == 2) {
+                fd.close();
+                cout << "\nRezultatai irasyti i " << pav << "\n";
+            }
         }
         else if (meniu_veiksmas == 3){
             string pav;
@@ -193,6 +231,8 @@ int main(){
                 cout << "\nFailas nerastas.\n";
                 continue;
             }
+
+            grupe.clear();
 
             string eilute;
             getline(fd, eilute);
@@ -212,6 +252,36 @@ int main(){
                 A.paz.clear();
             }
             cout << "\nDuomenys nuskaityti is " << pav << ". Studentu sk: " <<grupe.size() << "\n";
+        }
+        else if (meniu_veiksmas == 4){
+            cout << "\nKuri faila generuoti?\n"
+            << "1 - 1,000 studentu | studentai1000.txt\n"
+            << "2 - 10,000 studentu | studentai10000.txt\n"
+            << "3 - 100,000 studentu | studentai100000.txt\n"
+            << "4 - 1,000,000 studentu | studentai1000000.txt\n"
+            << "5 - 10,000,000 studentu | studentai10000000.txt\n"
+            << "6 - visus penkis\n";
+            int kiekis = 0;
+            while (kiekis < 1 || kiekis > 6) {
+                cout << "Pasirinkimas: ";
+                kiekis = skaicius_input();
+                if (kiekis < 1 || kiekis > 6) cout << "Tokio pasirinkimo nera\n";
+            }
+            ignoruoti_eilute();
+
+            const int kiekiai[5] = {1000, 10000, 100000, 1000000, 10000000};
+            const char *vardai[5] = {
+                "studentai1000.txt",
+                "studentai10000.txt",
+                "studentai100000.txt",
+                "studentai1000000.txt",
+                "studentai10000000.txt"
+            };
+            if (kiekis == 6) {
+                for (int i = 0; i < 5; i++) failo_generavimas(kiekiai[i], vardai[i]);
+            } else {
+                failo_generavimas(kiekiai[kiekis - 1], vardai[kiekis - 1]);
+            }
         }
         else if (meniu_veiksmas != 0){
             cout << "\nTokio pasirinkimo nera!\n";
@@ -271,17 +341,17 @@ double galutinis(const studentas &A, bool ar_mediana){
     return 0.4 * vidurkis(A) + 0.6 * A.exam;
 }
 
-void printas(const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis){
-    cout << std::left << std::setw(pavardes_ilgis) << A.pavarde
+void printas(std::ostream &out, const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis){
+    out << std::left << std::setw(pavardes_ilgis) << A.pavarde
     << std::left << std::setw(vardo_ilgis) << A.vardas
     << std::fixed << std::setprecision(2);
 
     if (pasirinkimas == 1){
-        cout << galutinis(A, false) << "\n";
+        out << galutinis(A, false) << "\n";
     } else if (pasirinkimas == 2){
-        cout << galutinis(A, true) << "\n";
+        out << galutinis(A, true) << "\n";
     } else{
-        cout << std::left << std::setw(18) << galutinis(A, false) << galutinis(A, true) << "\n";
+        out << std::left << std::setw(18) << galutinis(A, false) << galutinis(A, true) << "\n";
     }
 }
 
@@ -293,4 +363,21 @@ bool pagal_pavarde(const studentas &a, const studentas &b){
 bool pagal_varda(const studentas &a, const studentas &b){
     if (a.vardas == b.vardas) return a.pavarde < b.pavarde;
     return a.vardas < b.vardas;
+}
+
+void failo_generavimas(int stud_sk, const string &failo_pav){
+    std::ofstream fd(failo_pav);
+    if (!fd) {
+        cout << "Nepavyko sukurti " << failo_pav << "\n";
+        return;
+    }
+
+    fd << "Pavarde Vardas ND1 ND2 ND3 ND4 ND5 Egzaminas\n";
+    for (int i = 1; i <= stud_sk; i++) {
+        fd << "Pavarde" << i << " Vardas" << i;
+        for (int j = 0; j < 5; j++) fd << ' ' << random_pazymys();
+        fd << ' ' << random_pazymys() << '\n';
+    }
+    fd.close();
+    cout << "\nsukurtas " << failo_pav << " su " << stud_sk << " irasu\n";
 }
