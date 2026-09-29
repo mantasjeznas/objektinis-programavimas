@@ -31,10 +31,13 @@ double galutinis(const studentas &A, bool ar_mediana);
 bool pagal_pavarde(const studentas &a, const studentas &b);
 bool pagal_varda(const studentas &a, const studentas &b);
 void failo_generavimas(int stud_sk, const string &failo_pav);
+void skirstymas(const vector<studentas> &grupe, vector<studentas> &kietiakai, vector<studentas> &vargsiukai, bool ar_mediana);
 
 int main(){
     srand(time(nullptr));
     vector<studentas> grupe;
+    vector<studentas> kietiakai;
+    vector<studentas> vargsiukai;
     studentas A;
 
     int meniu_veiksmas = -1;
@@ -42,8 +45,9 @@ int main(){
         cout << "\n=== Studentu DB ===\n"
         << "1. Pazymiu ivedimas\n"
         << "2. Rodyti rezultatus\n"
-        << "3. Nuskaityti duomenis is failo\n"
-        << "4. Failu generavimas\n"
+        << "3. Skirstymas pagal bala\n"
+        << "4. Nuskaityti duomenis is failo\n"
+        << "5. Failu generavimas\n"
         << "0. Iseiti\n"
         << "Pasirinkimas: ";
         meniu_veiksmas = skaicius_input();
@@ -223,6 +227,26 @@ int main(){
             }
         }
         else if (meniu_veiksmas == 3){
+            if (grupe.empty()) {
+                cout << "\nNera studentu.\n";
+                continue;
+            }
+
+            cout << "\nPagal ka skaiciuoti galutini bala?\n"
+            << "1 - vidurkis\n"
+            << "2 - mediana\n";
+            int pagal = 0;
+            while (pagal != 1 && pagal != 2){
+                cout << "Pasirinkimas: ";
+                pagal = skaicius_input();
+                if (pagal != 1 && pagal != 2) cout << "Tokio pasirinkimo nera\n";
+            }
+
+            skirstymas(grupe, kietiakai, vargsiukai, pagal == 2);
+            cout << "\nVargsiukai (galutinis < 5): " << vargsiukai.size() << "\n";
+            cout << "Kietiakai (galutinis >= 5): " << kietiakai.size() << "\n";
+        }
+        else if (meniu_veiksmas == 4){
             string pav;
             cout << "Iveskite failo pav.: ";
             cin >> pav;
@@ -253,7 +277,7 @@ int main(){
             }
             cout << "\nDuomenys nuskaityti is " << pav << ". Studentu sk: " <<grupe.size() << "\n";
         }
-        else if (meniu_veiksmas == 4){
+        else if (meniu_veiksmas == 5){
             cout << "\nKuri faila generuoti?\n"
             << "1 - 1,000 studentu | studentai1000.txt\n"
             << "2 - 10,000 studentu | studentai10000.txt\n"
@@ -380,4 +404,13 @@ void failo_generavimas(int stud_sk, const string &failo_pav){
     }
     fd.close();
     cout << "\nsukurtas " << failo_pav << " su " << stud_sk << " irasu\n";
+}
+
+void skirstymas(const vector<studentas> &grupe, vector<studentas> &kietiakai, vector<studentas> &vargsiukai, bool ar_mediana){
+    vargsiukai.clear();
+    kietiakai.clear();
+    for (const studentas &S : grupe){
+        if (galutinis(S, ar_mediana) < 5.0) vargsiukai.push_back(S);
+        else kietiakai.push_back(S);
+    }
 }
