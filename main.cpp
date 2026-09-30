@@ -1,38 +1,18 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <iomanip>
-#include <algorithm>
-#include <limits>
-#include <stdexcept>
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
+#include "Studentas.h"
+#include "Pagalbiniai.h"
+#include "Failai.h"
 using std::string;
 using std::vector;
 using std::cout;
 using std::cin;
-
-struct studentas{
-    string vardas, pavarde;
-    vector<int> paz;
-    int exam;
-};
-
-int skaicius_input();
-int pazymio_apribojimas();
-void ignoruoti_eilute();
-int random_pazymys();
-void printas(std::ostream &out, const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis);
-double vidurkis(const studentas &A);
-double mediana(const studentas &A);
-double galutinis(const studentas &A, bool ar_mediana);
-bool pagal_pavarde(const studentas &a, const studentas &b);
-bool pagal_varda(const studentas &a, const studentas &b);
-void failo_generavimas(int stud_sk, const string &failo_pav);
-void skirstymas(const vector<studentas> &grupe, vector<studentas> &kietiakai, vector<studentas> &vargsiukai, bool ar_mediana);
-void isvesti_faila(std::ostream &out, vector<studentas> &grupe, int pasirinkimas, int rikiavimas);
 
 int main(){
     srand(time(nullptr));
@@ -177,7 +157,7 @@ int main(){
             int pasirinkimas = 0;
             while (pasirinkimas != 1 && pasirinkimas != 2 && pasirinkimas != 3) {
                 cout << "Pasirinkimas: ";
-                pasirinkimas = skaicius_input(); //
+                pasirinkimas = skaicius_input();
                 if (pasirinkimas != 1 && pasirinkimas != 2 && pasirinkimas != 3){
                     cout << "Tokio pasirinkimo nera\n";
                 }
@@ -204,7 +184,7 @@ int main(){
                 out = &fd;
             }
 
-            isvesti_faila(*out, grupe, pasirinkimas, rikiavimas);
+            rezultatu_isvedimas(*out, grupe, pasirinkimas, rikiavimas);
 
             if (kur == 2) {
                 fd.close();
@@ -263,8 +243,8 @@ int main(){
                     continue;
                 }
                 int pasirinkimas = skirstymo_mediana ? 2 : 1;
-                isvesti_faila(varg, vargsiukai, pasirinkimas, rikiavimas);
-                isvesti_faila(kiet, kietiakai, pasirinkimas, rikiavimas);
+                rezultatu_isvedimas(varg, vargsiukai, pasirinkimas, rikiavimas);
+                rezultatu_isvedimas(kiet, kietiakai, pasirinkimas, rikiavimas);
                 cout << "\nIrasyta i vargsiukai.txt (" << vargsiukai.size() << " studentu)\n";
                 cout << "Irasyta i kietiakai.txt (" << kietiakai.size() << " studentu)\n";
             }
@@ -336,128 +316,4 @@ int main(){
         }
     }
     return 0;
-}
-
-int skaicius_input(){
-    int sk;
-    while (!(cin >> sk)) {
-        cout << "Netinkama ivestis. Iveskite skaiciu: ";
-        cin.clear();
-        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
-    return sk;
-}
-
-int pazymio_apribojimas(){
-    while (true) {
-        int x = skaicius_input();
-        if (x >= 0 && x <= 10) return x;
-        cout << "Pazymys turi buti nuo 0 iki 10: ";
-    }
-}
-
-void ignoruoti_eilute(){
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-}
-
-int random_pazymys(){
-    return rand() % 11;
-}
-
-double vidurkis(const studentas &A){
-    if (A.paz.empty()) return 0;
-    double suma = 0;
-    for (int p : A.paz){
-        suma += p;
-    }
-    return suma / A.paz.size();
-}
-
-double mediana(const studentas &A){
-    if (A.paz.empty()) return 0;
-    vector<int> laikinas = A.paz;
-    std::sort(laikinas.begin(), laikinas.end());
-    int n = laikinas.size();
-    if (n % 2 == 1) return laikinas[n / 2]; // grazina vidurine reiksme, nes sveikoji dalyba
-    return (laikinas[n / 2 - 1] + laikinas[n / 2]) / 2.0;
-}
-
-double galutinis(const studentas &A, bool ar_mediana){
-    if (ar_mediana == true){
-    return 0.4 * mediana(A) + 0.6 * A.exam;
-    }
-    return 0.4 * vidurkis(A) + 0.6 * A.exam;
-}
-
-void printas(std::ostream &out, const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis){
-    out << std::left << std::setw(pavardes_ilgis) << A.pavarde
-    << std::left << std::setw(vardo_ilgis) << A.vardas
-    << std::fixed << std::setprecision(2);
-
-    if (pasirinkimas == 1){
-        out << galutinis(A, false) << "\n";
-    } else if (pasirinkimas == 2){
-        out << galutinis(A, true) << "\n";
-    } else{
-        out << std::left << std::setw(18) << galutinis(A, false) << galutinis(A, true) << "\n";
-    }
-}
-
-bool pagal_pavarde(const studentas &a, const studentas &b){
-    if (a.pavarde == b.pavarde) return a.vardas < b.vardas;
-    return a.pavarde < b.pavarde;
-}
-
-bool pagal_varda(const studentas &a, const studentas &b){
-    if (a.vardas == b.vardas) return a.pavarde < b.pavarde;
-    return a.vardas < b.vardas;
-}
-
-void failo_generavimas(int stud_sk, const string &failo_pav){
-    std::ofstream fd(failo_pav);
-    if (!fd) {
-        cout << "Nepavyko sukurti " << failo_pav << "\n";
-        return;
-    }
-
-    fd << "Pavarde Vardas ND1 ND2 ND3 ND4 ND5 Egzaminas\n";
-    for (int i = 1; i <= stud_sk; i++) {
-        fd << "Pavarde" << i << " Vardas" << i;
-        for (int j = 0; j < 5; j++) fd << ' ' << random_pazymys();
-        fd << ' ' << random_pazymys() << '\n';
-    }
-    fd.close();
-    cout << "\nsukurtas " << failo_pav << " su " << stud_sk << " irasu\n";
-}
-
-void skirstymas(const vector<studentas> &grupe, vector<studentas> &kietiakai, vector<studentas> &vargsiukai, bool ar_mediana){
-    vargsiukai.clear();
-    kietiakai.clear();
-    for (const studentas &S : grupe){
-        if (galutinis(S, ar_mediana) < 5.0) vargsiukai.push_back(S);
-        else kietiakai.push_back(S);
-    }
-}
-
-void isvesti_faila(std::ostream &out, vector<studentas> &grupe, int pasirinkimas, int rikiavimas){
-    if (rikiavimas == 1) std::sort(grupe.begin(), grupe.end(), pagal_varda);
-    else std::sort(grupe.begin(), grupe.end(), pagal_pavarde);
-
-    int pavardes_ilgis = 12;
-    int vardo_ilgis = 12;
-    for (const studentas &S : grupe){
-        if ((int)S.pavarde.size() + 2 > pavardes_ilgis) pavardes_ilgis = (int)S.pavarde.size() + 2;
-        if ((int)S.vardas.size() + 2 > vardo_ilgis) vardo_ilgis = (int)S.vardas.size() + 2;
-    }
-
-    out << std::left << std::setw(pavardes_ilgis) << "Pavarde" << std::left << std::setw(vardo_ilgis) << "Vardas";
-    if (pasirinkimas == 1) out << "Galutinis (Vid.)\n";
-    else if (pasirinkimas == 2) out << "Galutinis (Med.)\n";
-    else out << std::left << std::setw(18) << "Galutinis (Vid.)" << "Galutinis (Med.)\n";
-
-    int linijos_ilgis = pavardes_ilgis + vardo_ilgis + 16;
-    if (pasirinkimas == 3) linijos_ilgis = pavardes_ilgis + vardo_ilgis + 34;
-    out << string(linijos_ilgis, '-') << "\n";
-
-    for (const studentas &S : grupe) printas(out, S, pasirinkimas, pavardes_ilgis, vardo_ilgis);
 }
