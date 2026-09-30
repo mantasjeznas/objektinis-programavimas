@@ -4,12 +4,15 @@
 #include <iomanip>
 #include <algorithm>
 #include <iostream>
+#include <chrono>
 using std::string;
 using std::vector;
 using std::cout;
 using std::ostream;
 
 void failo_generavimas(int stud_sk, const string &failo_pav){
+    auto start = std::chrono::steady_clock::now();
+
     std::ofstream fd(failo_pav);
     if (!fd) {
         cout << "Nepavyko sukurti " << failo_pav << "\n";
@@ -23,7 +26,11 @@ void failo_generavimas(int stud_sk, const string &failo_pav){
         fd << ' ' << random_pazymys() << '\n';
     }
     fd.close();
+
+    auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> trukme = end - start;
     cout << "\nsukurtas " << failo_pav << " su " << stud_sk << " irasu\n";
+    cout << "trukme: " << trukme.count() << " s\n";
 }
 
 void rezultatu_isvedimas(ostream &out, vector<studentas> &grupe, int pasirinkimas, int rikiavimas){
