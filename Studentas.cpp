@@ -31,7 +31,6 @@ double galutinis(const studentas &A, bool ar_mediana){
 }
 
 void printas(ostream &out, const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis){
-    // out gali buti cout arba jau atidarytas failas.
     out << std::left << std::setw(pavardes_ilgis) << A.pavarde
         << std::left << std::setw(vardo_ilgis) << A.vardas
         << std::fixed << std::setprecision(2);

@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include <chrono>
 using std::string;
 using std::vector;
@@ -54,4 +55,87 @@ void rezultatu_isvedimas(ostream &out, vector<studentas> &grupe, int pasirinkima
     out << string(linijos_ilgis, '-') << "\n";
 
     for (const studentas &S : grupe) printas(out, S, pasirinkimas, pavardes_ilgis, vardo_ilgis);
+}
+
+bool nuskaityti_faila(const string &pav, vector<studentas> &grupe){
+    std::ifstream fd(pav);
+    if (!fd) return false;
+
+    grupe.clear();
+    string eilute;
+    getline(fd, eilute);
+
+    studentas A;
+    while (getline(fd, eilute)){
+        std::stringstream ss(eilute);
+        ss >> A.pavarde >> A.vardas;
+
+        A.paz.clear();
+        int x;
+        while (ss >> x) A.paz.push_back(x);
+
+        if (A.paz.empty()) continue;
+        A.exam = A.paz.back();
+        A.paz.pop_back();
+        grupe.push_back(A);
+        A.paz.clear();
+    }
+    return true;
+}
+
+void greicio_analize(const string &pav){
+    const int kartai = 3;
+    vector<studentas> grupe;
+    vector<studentas> kietiakai;
+    vector<studentas> vargsiukai;
+
+    if (!nuskaityti_faila(pav, grupe)){
+        cout << "\nnerasta " << pav << ". sugeneruokite meniu 5 punktu.\n";
+        return;
+    }
+
+    double t_skaitymas = 0;
+    double t_skirstymas = 0;
+    double t_rasymas = 0;
+
+    for (int i = 0; i < kartai; i++){
+        auto start = std::chrono::steady_clock::now();
+        if (!nuskaityti_faila(pav, grupe)){
+            cout << "\nNepavyko skaityti " << pav << "\n";
+            return;
+        }
+        auto end = std::chrono::steady_clock::now();
+        t_skaitymas += std::chrono::duration<double>(end - start).count();
+    }
+
+    for (int i = 0; i < kartai; i++){
+        auto start = std::chrono::steady_clock::now();
+        skirstymas(grupe, kietiakai, vargsiukai, false);
+        auto end = std::chrono::steady_clock::now();
+        t_skirstymas += std::chrono::duration<double>(end - start).count();
+    }
+
+    for (int i = 0; i < kartai; i++){
+        auto start = std::chrono::steady_clock::now();
+        std::ofstream varg("vargsiukai.txt");
+        std::ofstream kiet("kietiakai.txt");
+        if (!varg || !kiet){
+            cout << "\nNepavyko irasyti rezultatu failu.\n";
+            return;
+        }
+        rezultatu_isvedimas(varg, vargsiukai, 1, 2);
+        rezultatu_isvedimas(kiet, kietiakai, 1, 2);
+        varg.close();
+        kiet.close();
+        auto end = std::chrono::steady_clock::now();
+        t_rasymas += std::chrono::duration<double>(end - start).count();
+    }
+
+    cout << "\n--- " << pav << " (" << kartai << " kartu vidurkiai) ---\n";
+    cout << std::defaultfloat << std::setprecision(6);
+    cout << std::left
+     << std::setw(14) << "Studentu sk" << "| " << grupe.size() << "\n"
+     << std::setw(14) << "Skaitymas" << "| " << t_skaitymas / kartai << " s\n"
+     << std::setw(14) << "Skirstymas" << "| " << t_skirstymas / kartai << " s\n"
+     << std::setw(14) << "Rasymas" << "| " << t_rasymas / kartai << " s\n";
 }

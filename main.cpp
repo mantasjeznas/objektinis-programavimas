@@ -31,6 +31,7 @@ int main(){
         << "3. Skirstymas pagal bala\n"
         << "4. Nuskaityti duomenis is failo\n"
         << "5. Failu generavimas\n"
+        << "6. Greicio analize\n"
         << "0. Iseiti\n"
         << "Pasirinkimas: ";
         meniu_veiksmas = skaicius_input();
@@ -253,32 +254,11 @@ int main(){
             string pav;
             cout << "Iveskite failo pav.: ";
             cin >> pav;
-            std::ifstream fd(pav);
-            if (!fd){
+            if (!nuskaityti_faila(pav, grupe)){
                 cout << "\nFailas nerastas.\n";
                 continue;
             }
-
-            grupe.clear();
             ar_suskirstyta = false;
-
-            string eilute;
-            getline(fd, eilute);
-
-            while (getline(fd, eilute)){
-                std::stringstream ss(eilute);
-                ss >> A.pavarde >> A.vardas;
-
-                A.paz.clear();
-                int x;
-                while (ss >> x) A.paz.push_back(x);
-
-                if (A.paz.empty()) continue;
-                A.exam = A.paz.back();
-                A.paz.pop_back();
-                grupe.push_back(A);
-                A.paz.clear();
-            }
             cout << "\nDuomenys nuskaityti is " << pav << ". Studentu sk: " <<grupe.size() << "\n";
         }
         else if (meniu_veiksmas == 5){
@@ -309,6 +289,45 @@ int main(){
                 for (int i = 0; i < 5; i++) failo_generavimas(kiekiai[i], vardai[i]);
             } else {
                 failo_generavimas(kiekiai[kiekis - 1], vardai[kiekis - 1]);
+            }
+        } else if (meniu_veiksmas == 6){
+            const char *vardai[5] = {
+                "studentai1000.txt",
+                "studentai10000.txt",
+                "studentai100000.txt",
+                "studentai1000000.txt",
+                "studentai10000000.txt"
+            };
+            int esami[5];
+            int n = 0;
+            for (int i = 0; i < 5; i++) {
+                std::ifstream fd(vardai[i]);
+                if (fd) esami[n++] = i;
+            }
+            if (n == 0) {
+                cout << "\nNera sugeneruotu failu. Sugeneruokite meniu 5 punktu.\n";
+                continue;
+            }
+
+            cout << "\nKuri faila testuoti?\n";
+            for (int i = 0; i < n; i++) {
+                cout << i + 1 << " - " << vardai[esami[i]] << "\n";
+            }
+            if (n > 1) cout << n + 1 << " - visus esamus\n";
+
+            int max_pasirinkimas = (n > 1) ? n + 1 : n;
+            int kiekis = 0;
+            while (kiekis < 1 || kiekis > max_pasirinkimas) {
+                cout << "Pasirinkimas: ";
+                kiekis = skaicius_input();
+                if (kiekis < 1 || kiekis > max_pasirinkimas) cout << "Tokio pasirinkimo nera\n";
+            }
+            ignoruoti_eilute();
+
+            if (n > 1 && kiekis == n + 1) {
+                for (int i = 0; i < n; i++) greicio_analize(vardai[esami[i]]);
+            } else {
+                greicio_analize(vardai[esami[kiekis - 1]]);
             }
         }
         else if (meniu_veiksmas != 0){
