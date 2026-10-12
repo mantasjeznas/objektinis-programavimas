@@ -65,37 +65,6 @@ void rezultatu_isvedimas(ostream &out, vector<studentas> &grupe, int pasirinkima
     out << buf.str();
 }
 
-bool nuskaityti_faila(const string &pav, vector<studentas> &grupe){
-    std::ifstream fd(pav);
-    if (!fd) return false;
-
-    grupe.clear();
-    string eilute;
-    std::stringstream buf;
-    buf << fd.rdbuf();
-    fd.close();
-    getline(buf, eilute);
-
-    studentas A;
-    std::stringstream ss;
-    while (getline(buf, eilute)){
-        ss.clear();
-        ss.str(eilute);
-        ss >> A.pavarde >> A.vardas;
-
-        A.paz.clear();
-        int x;
-        while (ss >> x) A.paz.push_back(x);
-
-        if (A.paz.empty()) continue;
-        A.exam = A.paz.back();
-        A.paz.pop_back();
-        grupe.push_back(A);
-        A.paz.clear();
-    }
-    return true;
-}
-
 double greicio_analize(const string &pav){
     const int kartai = 3;
     vector<studentas> grupe;
