@@ -80,15 +80,6 @@ bool pagal_mediana_didejant(const studentas &a, const studentas &b){
     return galutinis(a, true) < galutinis(b, true);
 }
 
-void skirstymas(const vector<studentas> &grupe, vector<studentas> &kietiakai, vector<studentas> &vargsiukai, bool ar_mediana){
-    vargsiukai.clear();
-    kietiakai.clear();
-    for (const studentas &S : grupe){
-        if (galutinis(S, ar_mediana) < 5.0) vargsiukai.push_back(S);
-        else kietiakai.push_back(S);
-    }
-}
-
 studentas ivesti_studenta(){
     studentas A;
         cout<<"Iveskite per tarpa studento varda ir pavarde: ";

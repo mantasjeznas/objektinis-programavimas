@@ -22,6 +22,15 @@ bool pagal_vidurki_didejant(const studentas &a, const studentas &b);
 bool pagal_mediana_mazejant(const studentas &a, const studentas &b);
 bool pagal_mediana_didejant(const studentas &a, const studentas &b);
 studentas ivesti_studenta();
-void skirstymas(const std::vector<studentas> &grupe, std::vector<studentas> &kietiakai, std::vector<studentas> &vargsiukai, bool ar_mediana);
+
+template <class Konteineris>
+void skirstymas(const Konteineris &grupe, Konteineris &kietiakai, Konteineris &vargsiukai, bool ar_mediana){
+    vargsiukai.clear();
+    kietiakai.clear();
+    for (const studentas &S : grupe){
+        if (galutinis(S, ar_mediana) < 5.0) vargsiukai.push_back(S);
+        else kietiakai.push_back(S);
+    }
+}
 
 #endif
