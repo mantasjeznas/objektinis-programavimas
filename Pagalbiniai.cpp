@@ -30,3 +30,13 @@ void ignoruoti_eilute(){
 int random_pazymys(){
     return rand() % 11;
 }
+
+int pasirinkimas_tarp(int nuo, int iki){
+    int x = nuo - 1;
+    while (x < nuo || x > iki){
+        cout << "Pasirinkimas: ";
+        x = skaicius_input();
+        if (x < nuo || x > iki) cout << "Tokio pasirinkimo nera\n";
+    }
+    return x;
+}

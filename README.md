@@ -11,13 +11,13 @@ Skaitymas: failas nuskaitomas į vektorių;
 Skirstymas: kopijuojama į vektorius “vargsiukai” ir “kietiakai”;
 Rašymas: abi grupės surikiuojamos(pagal pavardę) ir surašomos į vargsiukai.txt ir kietiakai.txt.
 
-| failas | studentų | skaitymas, s | skirstymas, s | rašymas, s |
-|---|---:|---:|---:|---:|
-| studentai1000.txt | 1000 | 0.00259957 | 0.000396514 | 0.00125843 |
-| studentai10000.txt | 10000 | 0.0229616 | 0.00399596 | 0.0114728 |
-| studentai100000.txt | 100000 | 0.227453 | 0.0376774 | 0.124706 |
-| studentai1000000.txt | 1000000 | 2.30009 | 0.372941 | 1.36898 |
-| studentai10000000.txt | 10000000 | 23.7857 | 4.11928 | 15.2353 |
+| failas | studentų | skaitymas, s | skirstymas, s | rašymas, s | bendras laikas s |
+|---|---:|---:|---:|---:|---:|
+| studentai1000.txt | 1000 | 0.000716403 | 0.000144167 | 0.00144107 | 0.00230164 |
+| studentai10000.txt | 10000 | 0.00884856 | 0.000463722 | 0.003222183 | 0.0125341 |
+| studentai100000.txt | 100000 | 0.0585941 | 0.00375571 | 0.0264452 | 0.088795 |
+| studentai1000000.txt | 1000000 | 0.591244 | 0.0372668 | 0.262962 | 0.891473 |
+| studentai10000000.txt | 10000000 | 6.20625 | 0.499676 | 2.67394 | 9.37987 |
 
 <sub>laikas matuotas sekundėmis</sub>
 

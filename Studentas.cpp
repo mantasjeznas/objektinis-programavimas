@@ -2,8 +2,14 @@
 #include <algorithm>
 #include <iomanip>
 #include <vector>
+#include <string>
+#include <stdexcept>
+#include "Pagalbiniai.h"
 using std::vector;
 using std::ostream;
+using std::string;
+using std::cout;
+using std::cin;
 
 double vidurkis(const studentas &A){
     if (A.paz.empty()) return 0;
@@ -54,6 +60,26 @@ bool pagal_varda(const studentas &a, const studentas &b){
     return a.vardas < b.vardas;
 }
 
+bool pagal_vidurki_mazejant(const studentas &a, const studentas &b){
+    if (galutinis(a, false) == galutinis(b, false)) return pagal_pavarde(a, b);
+    return galutinis(a, false) > galutinis(b, false);
+}
+
+bool pagal_vidurki_didejant(const studentas &a, const studentas &b){
+    if (galutinis(a, false) == galutinis(b, false)) return pagal_pavarde(a, b);
+    return galutinis(a, false) < galutinis(b, false);
+}
+
+bool pagal_mediana_mazejant(const studentas &a, const studentas &b){
+    if (galutinis(a, true) == galutinis(b, true)) return pagal_pavarde(a, b);
+    return galutinis(a, true) > galutinis(b, true);
+}
+
+bool pagal_mediana_didejant(const studentas &a, const studentas &b){
+    if (galutinis(a, true) == galutinis(b, true)) return pagal_pavarde(a, b);
+    return galutinis(a, true) < galutinis(b, true);
+}
+
 void skirstymas(const vector<studentas> &grupe, vector<studentas> &kietiakai, vector<studentas> &vargsiukai, bool ar_mediana){
     vargsiukai.clear();
     kietiakai.clear();
@@ -61,4 +87,80 @@ void skirstymas(const vector<studentas> &grupe, vector<studentas> &kietiakai, ve
         if (galutinis(S, ar_mediana) < 5.0) vargsiukai.push_back(S);
         else kietiakai.push_back(S);
     }
+}
+
+studentas ivesti_studenta(){
+    studentas A;
+        cout<<"Iveskite per tarpa studento varda ir pavarde: ";
+        cin>>A.vardas>>A.pavarde;
+        ignoruoti_eilute();
+
+        cout << "1 - pazymius vesti ranka, 2 - generuoti atsitiktinai: ";
+        int rezimas = skaicius_input();
+        while (rezimas != 1 && rezimas != 2) {
+            cout << "Klaida. Iveskite 1 arba 2: ";
+            rezimas = skaicius_input();
+        }
+        ignoruoti_eilute();
+
+        cout<<"Iveskite semestro paz. kieki: ";
+
+        if (rezimas == 2){
+            int k = skaicius_input();
+            while (k < 0){
+                cout << "Pazymiu kiekis negali buti neigiamas!\n";
+                cout<<"Iveskite semestro paz. kieki: ";
+                k = skaicius_input();
+            }
+            for (int i = 0; i < k; i++){
+                A.paz.push_back(random_pazymys());
+            }
+            A.exam = random_pazymys();
+            ignoruoti_eilute();
+        } else{
+            string ivedimas;
+            getline(cin, ivedimas);
+
+            if (ivedimas.empty()){
+            int i = 0;
+            while(true){
+                cout << "Iveskite " << i + 1 << " paz: ";
+                getline(cin, ivedimas);
+                if (ivedimas.empty()) break;
+                try{
+                    int paz = std::stoi(ivedimas);
+                    if (paz < 0 || paz > 10){
+                        cout << "Pazymys turi buti nuo 0 iki 10\n";
+                        continue;
+                    }
+                    A.paz.push_back(paz);
+                    i++;
+                } catch(const std::exception&){
+                    cout << "Klaida. Iveskite skaiciu\n";
+                }
+            }
+            } else{
+                int k;
+                try{
+                    k = std::stoi(ivedimas);
+                } catch (const std::exception&){
+                k = -1;
+                }
+                while (k < 0){
+                    cout << "Bloga ivestis. Iveskite semestro paz. kieki: \n";
+                    k = skaicius_input();
+                }
+                for (int i = 0; i < k; i++){
+                    cout << "Iveskite " << i + 1 << " paz: ";
+                    int a = pazymio_apribojimas();
+                    A.paz.push_back(a);
+                }
+                ignoruoti_eilute();
+            }
+
+        cout<<"Iveskite semestro Egzamino paz.: "; A.exam = pazymio_apribojimas();
+        ignoruoti_eilute();
+
+        }
+    return A;
 }
