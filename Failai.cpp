@@ -36,33 +36,22 @@ void failo_generavimas(int stud_sk, const string &failo_pav){
     cout << "trukme: " << trukme.count() << " s\n";
 }
 
-void rezultatu_isvedimas(ostream &out, vector<studentas> &grupe, int pasirinkimas, int rikiavimas){
+void rikiuoti_grupe(vector<studentas> &grupe, int pasirinkimas, int rikiavimas){
     if (rikiavimas == 1) std::sort(grupe.begin(), grupe.end(), pagal_varda);
     else if (rikiavimas == 3 && pasirinkimas == 2) std::sort(grupe.begin(), grupe.end(), pagal_mediana_mazejant);
     else if (rikiavimas == 3) std::sort(grupe.begin(), grupe.end(), pagal_vidurki_mazejant);
     else if (rikiavimas == 4 && pasirinkimas == 2) std::sort(grupe.begin(), grupe.end(), pagal_mediana_didejant);
     else if (rikiavimas == 4) std::sort(grupe.begin(), grupe.end(), pagal_vidurki_didejant);
     else std::sort(grupe.begin(), grupe.end(), pagal_pavarde);
+}
 
-    int pavardes_ilgis = 12;
-    int vardo_ilgis = 12;
-    for (const studentas &S : grupe){
-        if ((int)S.pavarde.size() + 2 > pavardes_ilgis) pavardes_ilgis = (int)S.pavarde.size() + 2;
-        if ((int)S.vardas.size() + 2 > vardo_ilgis) vardo_ilgis = (int)S.vardas.size() + 2;
-    }
-
-    std::stringstream buf;
-    buf << std::left << std::setw(pavardes_ilgis) << "Pavarde" << std::left << std::setw(vardo_ilgis) << "Vardas";
-    if (pasirinkimas == 1) buf << "Galutinis (Vid.)\n";
-    else if (pasirinkimas == 2) buf << "Galutinis (Med.)\n";
-    else buf << std::left << std::setw(18) << "Galutinis (Vid.)" << "Galutinis (Med.)\n";
-
-    int linijos_ilgis = pavardes_ilgis + vardo_ilgis + 16;
-    if (pasirinkimas == 3) linijos_ilgis = pavardes_ilgis + vardo_ilgis + 34;
-    buf << string(linijos_ilgis, '-') << "\n";
-
-    for (const studentas &S : grupe) printas(buf, S, pasirinkimas, pavardes_ilgis, vardo_ilgis);
-    out << buf.str();
+void rikiuoti_grupe(std::list<studentas> &grupe, int pasirinkimas, int rikiavimas){
+    if (rikiavimas == 1) grupe.sort(pagal_varda);
+    else if (rikiavimas == 3 && pasirinkimas == 2) grupe.sort(pagal_mediana_mazejant);
+    else if (rikiavimas == 3) grupe.sort(pagal_vidurki_mazejant);
+    else if (rikiavimas == 4 && pasirinkimas == 2) grupe.sort(pagal_mediana_didejant);
+    else if (rikiavimas == 4) grupe.sort(pagal_vidurki_didejant);
+    else grupe.sort(pagal_pavarde);
 }
 
 double greicio_analize(const string &pav){
@@ -135,19 +124,6 @@ int rikiavimo_pasirinkimas(){
         if (tvarka == 2) rikiavimas = 4;
     }
     return rikiavimas;
-}
-
-void irasyti_kategorijas(vector<studentas> &vargsiukai, vector<studentas> &kietiakai, int pasirinkimas, int rikiavimas){
-    std::ofstream varg("vargsiukai.txt");
-    std::ofstream kiet("kietiakai.txt");
-    if (!varg || !kiet) {
-        cout << "\nNepavyko sukurti/redaguoti failo.\n";
-        return;
-    }
-    rezultatu_isvedimas(varg, vargsiukai, pasirinkimas, rikiavimas);
-    rezultatu_isvedimas(kiet, kietiakai, pasirinkimas, rikiavimas);
-    cout << "\nIrasyta i vargsiukai.txt (" << vargsiukai.size() << " studentu)\n";
-    cout << "Irasyta i kietiakai.txt (" << kietiakai.size() << " studentu)\n";
 }
 
 void failu_generavimo_meniu(){
