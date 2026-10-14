@@ -142,7 +142,7 @@ void programa(){
         else if (meniu_veiksmas == 5){
             failu_generavimo_meniu();
         } else if (meniu_veiksmas == 6){
-            greicio_analizes_meniu();
+            greicio_analize_meniu<Konteineris>();
         }
         else if (meniu_veiksmas != 0){
             cout << "\nTokio pasirinkimo nera!\n";

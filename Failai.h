@@ -8,7 +8,9 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <chrono>
 #include "Studentas.h"
+#include "Pagalbiniai.h"
 
 const int failu_kiekiai[5] = {1000, 10000, 100000, 1000000, 10000000};
 const char *const failu_vardai[5] = {
@@ -47,8 +49,6 @@ void rezultatu_isvedimas(std::ostream &out, Konteineris &grupe, int pasirinkimas
     for (const studentas &S : grupe) printas(buf, S, pasirinkimas, pavardes_ilgis, vardo_ilgis);
     out << buf.str();
 }
-
-double greicio_analize(const std::string &pav);
 
 template <class Konteineris>
 bool nuskaityti_faila(const std::string &pav, Konteineris &grupe){
@@ -99,6 +99,99 @@ void irasyti_kategorijas(Konteineris &vargsiukai, Konteineris &kietiakai, int pa
 }
 
 void failu_generavimo_meniu();
-void greicio_analizes_meniu();
+
+template <class Konteineris>
+double greicio_analize(const std::string &pav){
+    const int kartai = 3;
+    Konteineris grupe;
+    Konteineris kietiakai;
+    Konteineris vargsiukai;
+
+    if (!nuskaityti_faila(pav, grupe)){
+        std::cout << "\nnerasta " << pav << ". sugeneruokite meniu 5 punktu.\n";
+        return 0;
+    }
+
+    double t_skaitymas = 0;
+    double t_skirstymas = 0;
+    double t_rasymas = 0;
+
+    for (int i = 0; i < kartai; i++){
+        auto start = std::chrono::steady_clock::now();
+        if (!nuskaityti_faila(pav, grupe)){
+            std::cout << "\nNepavyko skaityti " << pav << "\n";
+            return 0;
+        }
+        auto end = std::chrono::steady_clock::now();
+        t_skaitymas += std::chrono::duration<double>(end - start).count();
+    }
+
+    for (int i = 0; i < kartai; i++){
+        auto start = std::chrono::steady_clock::now();
+        skirstymas(grupe, kietiakai, vargsiukai, false);
+        auto end = std::chrono::steady_clock::now();
+        t_skirstymas += std::chrono::duration<double>(end - start).count();
+    }
+
+    for (int i = 0; i < kartai; i++){
+        auto start = std::chrono::steady_clock::now();
+        std::ofstream varg("vargsiukai.txt");
+        std::ofstream kiet("kietiakai.txt");
+        if (!varg || !kiet){
+            std::cout << "\nNepavyko irasyti rezultatu failu.\n";
+            return 0;
+        }
+        rezultatu_isvedimas(varg, vargsiukai, 1, 2);
+        rezultatu_isvedimas(kiet, kietiakai, 1, 2);
+        varg.close();
+        kiet.close();
+        auto end = std::chrono::steady_clock::now();
+        t_rasymas += std::chrono::duration<double>(end - start).count();
+    }
+
+    std::cout << "\n--- " << pav << " (" << kartai << " kartu vidurkiai) ---\n";
+    std::cout << std::defaultfloat << std::setprecision(6);
+    std::cout << std::left
+     << std::setw(15) << "Studentu sk" << "| " << grupe.size() << "\n"
+     << std::setw(15) << "Skaitymas" << "| " << t_skaitymas / kartai << " s\n"
+     << std::setw(15) << "Skirstymas" << "| " << t_skirstymas / kartai << " s\n"
+     << std::setw(15) << "Rasymas" << "| " << t_rasymas / kartai << " s\n";
+
+    double bendras = (t_skaitymas + t_skirstymas + t_rasymas) / kartai;
+    std::cout << std::setw(15) << "Bendras laikas" << "| " << bendras << " s\n";
+    return bendras;
+}
+
+template <class Konteineris>
+void greicio_analize_meniu(){
+    int esami[5];
+    int n = 0;
+    for (int i = 0; i < 5; i++) {
+        std::ifstream fd(failu_vardai[i]);
+        if (fd) esami[n++] = i;
+    }
+    if (n == 0) {
+        std::cout << "\nNera sugeneruotu failu. Sugeneruokite meniu 5 punktu.\n";
+        return;
+    }
+
+    std::cout << "\nKuri faila testuoti?\n";
+    for (int i = 0; i < n; i++) {
+        std::cout << i + 1 << " - " << failu_vardai[esami[i]] << "\n";
+    }
+    if (n > 1) std::cout << n + 1 << " - visus esamus\n";
+
+    int max_pasirinkimas = (n > 1) ? n + 1 : n;
+    int kiekis = pasirinkimas_tarp(1, max_pasirinkimas);
+    ignoruoti_eilute();
+
+    if (n > 1 && kiekis == n + 1) {
+        double bendras = 0;
+        for (int i = 0; i < n; i++) bendras += greicio_analize<Konteineris>(failu_vardai[esami[i]]);
+        std::cout << "\nBendras visu failu laikas: " << bendras << " s\n";
+    } else {
+        greicio_analize<Konteineris>(failu_vardai[esami[kiekis - 1]]);
+    }
+}
 
 #endif
