@@ -1,36 +1,52 @@
 # objektinis-programavimas
 VU objektinio programavimo projektas
 
-## v0.2 greičio (spartos) rezultatai
+## v0.3 greičio (spartos) rezultatai
 
 Testavimas atliktas su jau sugeneruotais failais studentai1000.txt - studentai10000000.txt.
 Kiekvienas procesas kartotas po 3 kartus. Failų generavimas į skaičiavimą neįtrauktas. Lentelėje pateiktas kiekvieno proceso vidurkis.
 
 Eiga:
-Skaitymas: failas nuskaitomas į vektorių;
-Skirstymas: kopijuojama į vektorius “vargsiukai” ir “kietiakai”;
-Rašymas: abi grupės surikiuojamos(pagal pavardę) ir surašomos į vargsiukai.txt ir kietiakai.txt.
+Skaitymas: failas nuskaitomas į konteinerį (`vector` arba `list`);
+Skirstymas: kopijuojama į konteinerius “vargsiukai” ir “kietiakai”;
+Rašymas: surikiuotos grupės surašomos į vargsiukai.txt ir kietiakai.txt;
+Rūšiavimas: abi grupės surikiuojamos pagal galutinį balą (mažėjančiai).
 
 ## \<vector\>
-| failas | studentų | skaitymas, s | skirstymas, s | rašymas, s | bendras laikas s |
-|---|---:|---:|---:|---:|---:|
-| studentai1000.txt | 1000 | 0.000716403 | 0.000144167 | 0.00144107 | 0.00230164 |
-| studentai10000.txt | 10000 | 0.00884856 | 0.000463722 | 0.003222183 | 0.0125341 |
-| studentai100000.txt | 100000 | 0.0585941 | 0.00375571 | 0.0264452 | 0.088795 |
-| studentai1000000.txt | 1000000 | 0.591244 | 0.0372668 | 0.262962 | 0.891473 |
-| studentai10000000.txt | 10000000 | 6.20625 | 0.499676 | 2.67394 | 9.37987 |
+| failas | studentų | skaitymas, s | skirstymas, s | rašymas, s | rūšiavimas, s | bendras laikas s |
+|---|---:|---:|---:|---:|---:|---:|
+| studentai1000.txt | 1000 | 0.0013154 | 0.0000867 | 0.000795 | 0.0003528 | 0.0025498 |
+| studentai10000.txt | 10000 | 0.0081312 | 0.0004164 | 0.0022497 | 0.003034 | 0.0138313 |
+| studentai100000.txt | 100000 | 0.0566773 | 0.0036074 | 0.0210392 | 0.0342742 | 0.115598 |
+| studentai1000000.txt | 1000000 | 0.582248 | 0.0517744 | 0.260544 | 0.424 | 1.31857 |
+| studentai10000000.txt | 10000000 | 6.24886 | 0.664551 | 2.92715 | 5.82745 | 15.668 |
 
-**Išvada**. Kuo didesnis failas, tuo ilgiau trunka visi trys etapai. Nuo 1 000 iki 10 000 000 studentų laikas išauga maždaug tiek pat kartų, kiek ir duomenų kiekis. Ilgiausiai trunka skaitymas, trumpiausiai skirstymas. Rašymas yra tarp jų, nes be įrašymo į diską dar yra rikiuojami studentai ir suformuojama lentelė. Dideliame faile daugiausia laiko užima duomenų skaitymas ir rašymas į failą, ne galutinio balo skaičiavimas.
+Bendras visų failų laikas 17,1186 s
+
+<img src="vector_laikai.png" width="400">
+<br><br>
+
+**Išvada**. Kuo didesnis failas, tuo ilgiau trunka visi etapai. Nuo 1 000 iki 10 000 000 studentų bendras laikas išauga maždaug 6000 kartų, o duomenų yra 10 000 kartų daugiau. Nuo 1 000 000 iki 10 000 000 studentų jis išauga apie 12 kartų. Mažuose failuose ilgiausiai trunka skaitymas. Faile su 10 000 000 studentų skaitymas (6,25 s) ir rūšiavimas (5,83 s) užima daugiausiai laiko, rašymas trunka 2,93 s, o trumpiausiai trunka skirstymas (0,66 s).
 
 ## \<list\>
-| failas | studentų | skaitymas, s | skirstymas, s | rašymas, s | bendras laikas s |
-|---|---:|---:|---:|---:|---:|
-| studentai1000.txt | 1000 | 0.00169442 | 0.000155403 | 0.00142608 | 0.0032759 |
-| studentai10000.txt | 10000 | 0.00830774 | 0.0005765 | 0.00386558 | 0.0127498 |
-| studentai100000.txt | 100000 | 0.0592591 | 0.00497779 | 0.0276213 | 0.0918582 |
-| studentai1000000.txt | 1000000 | 0.693618 | 0.0445039 | 0.281836 | 1.01996 |
-| studentai10000000.txt | 10000000 | 6.52029 | 0.568762 | 3.1152 | 10.2043 |
+| failas | studentų | skaitymas, s | skirstymas, s | rašymas, s | rūšiavimas, s | bendras laikas s |
+|---|---:|---:|---:|---:|---:|---:|
+| studentai1000.txt | 1000 | 0.0016536 | 0.0001498 | 0.0010184 | 0.0004099 | 0.0032317 |
+| studentai10000.txt | 10000 | 0.0088176 | 0.0004691 | 0.0020218 | 0.0022588 | 0.0135673 |
+| studentai100000.txt | 100000 | 0.0581188 | 0.005309 | 0.0244732 | 0.0278873 | 0.115788 |
+| studentai1000000.txt | 1000000 | 0.602292 | 0.134513 | 0.43024 | 0.715659 | 1.8827 |
+| studentai10000000.txt | 10000000 | 6.60467 | 1.52681 | 4.31249 | 10.862 | 23.306 |
 
-**Išvada**. Su `std::list` visi etapai trunka šiek tiek ilgiau nei su `std::vector`. Didžiausiame faile bendras laikas yra 10.2 s, o su `vector` buvo 9.4 s. Skirtumas atsiranda todėl, kad `list` kiekvieną studentą laiko atskiroje atminties vietoje, o `vector` visus laiko iš eilės, todėl kompiuteriui juos greičiau pasiekti. Kaip ir su `vector`, ilgiausiai trunka skaitymas, trumpiausiai skirstymas, o laikas auga maždaug tiek pat kartų, kiek ir duomenų kiekis.
+Bendras visų failų laikas 25,3213 s
+
+<img src="list_laikai.png" width="400">
+<br><br>
+
+
+**Išvada**. Su `std::list` didžiausiame faile bendras laikas yra 23,3 s, o su `vector` 15,7 s, todėl `list` apie 1,5 karto lėtesnis. Skaitymas panašus (6,60 s ir 6,25 s), skirstymas su `list` lėtesnis apie 2,3 karto (1,53 s ir 0,66 s), rašymas apie 1,5 karto (4,31 s ir 2,93 s). Rūšiavimas su `list` trunka 10,9 s ir yra ilgiausias etapas, o su `vector` 5,83 s. Su 10 000 ir 100 000 studentų `list` rūšiavimas buvo šiek tiek greitesnis, o bendri laikai panašūs, tačiau nuo 1 000 000 studentų `vector` greitesnis visuose etapuose. Tikėtina, kad taip yra todėl, kad `list` laiko kiekvieną studentą atskiroje atminties vietoje, o `vector` iš eilės, todėl kompiuteriui juos greičiau pasiekti.
+
+
+## Bendra išvada
+`std::vector` yra tinkamesnis pasirinkimas didelėms studentų grupėms, nes visi etapai su juo trunka trumpiau, kai failai didesni nei 1 000 000 įrašų. Su mažesniais failais skirtumas nedidelis. Greitis didėjant failui auga maždaug proporcingai duomenų kiekiui abiem konteineriams.
 
 <sub>laikai matuoti sekundėmis</sub>
