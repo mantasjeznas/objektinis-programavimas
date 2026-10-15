@@ -26,8 +26,8 @@ void rikiuoti_grupe(std::vector<studentas> &grupe, int pasirinkimas, int rikiavi
 void rikiuoti_grupe(std::list<studentas> &grupe, int pasirinkimas, int rikiavimas);
 
 template <class Konteineris>
-void rezultatu_isvedimas(std::ostream &out, Konteineris &grupe, int pasirinkimas, int rikiavimas){
-    rikiuoti_grupe(grupe, pasirinkimas, rikiavimas);
+void rezultatu_isvedimas(std::ostream &out, Konteineris &grupe, int pasirinkimas, int rikiavimas, bool ar_rikiuoti = true){
+    if (ar_rikiuoti) rikiuoti_grupe(grupe, pasirinkimas, rikiavimas);
 
     int pavardes_ilgis = 12;
     int vardo_ilgis = 12;
@@ -115,6 +115,7 @@ double greicio_analize(const std::string &pav){
     double t_skaitymas = 0;
     double t_skirstymas = 0;
     double t_rasymas = 0;
+    double t_rusiavimas = 0;
 
     for (int i = 0; i < kartai; i++){
         auto start = std::chrono::steady_clock::now();
@@ -131,6 +132,12 @@ double greicio_analize(const std::string &pav){
         skirstymas(grupe, kietiakai, vargsiukai, false);
         auto end = std::chrono::steady_clock::now();
         t_skirstymas += std::chrono::duration<double>(end - start).count();
+
+        start = std::chrono::steady_clock::now();
+        rikiuoti_grupe(vargsiukai, 1, 3);
+        rikiuoti_grupe(kietiakai, 1, 3);
+        end = std::chrono::steady_clock::now();
+        t_rusiavimas += std::chrono::duration<double>(end - start).count();
     }
 
     for (int i = 0; i < kartai; i++){
@@ -141,8 +148,8 @@ double greicio_analize(const std::string &pav){
             std::cout << "\nNepavyko irasyti rezultatu failu.\n";
             return 0;
         }
-        rezultatu_isvedimas(varg, vargsiukai, 1, 3);
-        rezultatu_isvedimas(kiet, kietiakai, 1, 3);
+        rezultatu_isvedimas(varg, vargsiukai, 1, 3, false);
+        rezultatu_isvedimas(kiet, kietiakai, 1, 3, false);
         varg.close();
         kiet.close();
         auto end = std::chrono::steady_clock::now();
@@ -155,9 +162,10 @@ double greicio_analize(const std::string &pav){
      << std::setw(15) << "Studentu sk" << "| " << grupe.size() << "\n"
      << std::setw(15) << "Skaitymas" << "| " << t_skaitymas / kartai << " s\n"
      << std::setw(15) << "Skirstymas" << "| " << t_skirstymas / kartai << " s\n"
-     << std::setw(15) << "Rasymas" << "| " << t_rasymas / kartai << " s\n";
+     << std::setw(15) << "Rasymas" << "| " << t_rasymas / kartai << " s\n"
+     << std::setw(15) << "Rusiavimas" << "| " << t_rusiavimas / kartai << " s\n";
 
-    double bendras = (t_skaitymas + t_skirstymas + t_rasymas) / kartai;
+    double bendras = (t_skaitymas + t_skirstymas + t_rasymas + t_rusiavimas) / kartai;
     std::cout << std::setw(15) << "Bendras laikas" << "| " << bendras << " s\n";
     return bendras;
 }
