@@ -141,8 +141,8 @@ double greicio_analize(const std::string &pav){
             std::cout << "\nNepavyko irasyti rezultatu failu.\n";
             return 0;
         }
-        rezultatu_isvedimas(varg, vargsiukai, 1, 2);
-        rezultatu_isvedimas(kiet, kietiakai, 1, 2);
+        rezultatu_isvedimas(varg, vargsiukai, 1, 3);
+        rezultatu_isvedimas(kiet, kietiakai, 1, 3);
         varg.close();
         kiet.close();
         auto end = std::chrono::steady_clock::now();
