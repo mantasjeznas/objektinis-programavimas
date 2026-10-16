@@ -5,8 +5,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
-#include <sstream>
-#include <stdexcept>
 #include "Studentas.h"
 #include "Pagalbiniai.h"
 #include "Failai.h"

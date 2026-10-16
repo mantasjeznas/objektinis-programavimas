@@ -30,21 +30,17 @@ double mediana(const studentas &A){
 }
 
 double galutinis(const studentas &A, bool ar_mediana){
-    if (ar_mediana == true){
-        return 0.4 * mediana(A) + 0.6 * A.exam;
-    }
+    if (ar_mediana) return 0.4 * mediana(A) + 0.6 * A.exam;
     return 0.4 * vidurkis(A) + 0.6 * A.exam;
 }
 
 void printas(ostream &out, const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis){
     out << std::left << std::setw(pavardes_ilgis) << A.pavarde
-        << std::left << std::setw(vardo_ilgis) << A.vardas
+        << std::setw(vardo_ilgis) << A.vardas
         << std::fixed << std::setprecision(2);
 
-    if (pasirinkimas == 1){
-        out << galutinis(A, false) << "\n";
-    } else if (pasirinkimas == 2){
-        out << galutinis(A, true) << "\n";
+    if (pasirinkimas == 1 || pasirinkimas == 2){
+        out << galutinis(A, pasirinkimas == 2) << "\n";
     } else{
         out << std::left << std::setw(18) << galutinis(A, false) << galutinis(A, true) << "\n";
     }
@@ -82,40 +78,39 @@ bool pagal_mediana_didejant(const studentas &a, const studentas &b){
 
 studentas ivesti_studenta(){
     studentas A;
-        cout<<"Iveskite per tarpa studento varda ir pavarde: ";
-        cin>>A.vardas>>A.pavarde;
-        ignoruoti_eilute();
+    cout << "Iveskite per tarpa studento varda ir pavarde: ";
+    cin >> A.vardas >> A.pavarde;
+    ignoruoti_eilute();
 
-        cout << "1 - pazymius vesti ranka, 2 - generuoti atsitiktinai: ";
-        int rezimas = skaicius_input();
-        while (rezimas != 1 && rezimas != 2) {
-            cout << "Klaida. Iveskite 1 arba 2: ";
-            rezimas = skaicius_input();
+    cout << "1 - pazymius vesti ranka, 2 - generuoti atsitiktinai: ";
+    int rezimas = skaicius_input();
+    while (rezimas != 1 && rezimas != 2) {
+        cout << "Klaida. Iveskite 1 arba 2: ";
+        rezimas = skaicius_input();
+    }
+    ignoruoti_eilute();
+
+    cout << "Iveskite semestro paz. kieki: ";
+
+    if (rezimas == 2){
+        int k = skaicius_input();
+        while (k < 0){
+            cout << "Pazymiu kiekis negali buti neigiamas!\n";
+            cout << "Iveskite semestro paz. kieki: ";
+            k = skaicius_input();
         }
+        for (int i = 0; i < k; i++){
+            A.paz.push_back(random_pazymys());
+        }
+        A.exam = random_pazymys();
         ignoruoti_eilute();
+    } else{
+        string ivedimas;
+        getline(cin, ivedimas);
 
-        cout<<"Iveskite semestro paz. kieki: ";
-
-        if (rezimas == 2){
-            int k = skaicius_input();
-            while (k < 0){
-                cout << "Pazymiu kiekis negali buti neigiamas!\n";
-                cout<<"Iveskite semestro paz. kieki: ";
-                k = skaicius_input();
-            }
-            for (int i = 0; i < k; i++){
-                A.paz.push_back(random_pazymys());
-            }
-            A.exam = random_pazymys();
-            ignoruoti_eilute();
-        } else{
-            string ivedimas;
-            getline(cin, ivedimas);
-
-            if (ivedimas.empty()){
-            int i = 0;
+        if (ivedimas.empty()){
             while(true){
-                cout << "Iveskite " << i + 1 << " paz: ";
+                cout << "Iveskite " << A.paz.size() + 1 << " paz: ";
                 getline(cin, ivedimas);
                 if (ivedimas.empty()) break;
                 try{
@@ -125,33 +120,31 @@ studentas ivesti_studenta(){
                         continue;
                     }
                     A.paz.push_back(paz);
-                    i++;
                 } catch(const std::exception&){
                     cout << "Klaida. Iveskite skaiciu\n";
                 }
             }
-            } else{
-                int k;
-                try{
-                    k = std::stoi(ivedimas);
-                } catch (const std::exception&){
+        } else{
+            int k;
+            try{
+                k = std::stoi(ivedimas);
+            } catch (const std::exception&){
                 k = -1;
-                }
-                while (k < 0){
-                    cout << "Bloga ivestis. Iveskite semestro paz. kieki: \n";
-                    k = skaicius_input();
-                }
-                for (int i = 0; i < k; i++){
-                    cout << "Iveskite " << i + 1 << " paz: ";
-                    int a = pazymio_apribojimas();
-                    A.paz.push_back(a);
-                }
-                ignoruoti_eilute();
             }
-
-        cout<<"Iveskite semestro Egzamino paz.: "; A.exam = pazymio_apribojimas();
-        ignoruoti_eilute();
-
+            while (k < 0){
+                cout << "Bloga ivestis. Iveskite semestro paz. kieki: \n";
+                k = skaicius_input();
+            }
+            for (int i = 0; i < k; i++){
+                cout << "Iveskite " << i + 1 << " paz: ";
+                A.paz.push_back(pazymio_apribojimas());
+            }
+            ignoruoti_eilute();
         }
+
+        cout << "Iveskite semestro Egzamino paz.: ";
+        A.exam = pazymio_apribojimas();
+        ignoruoti_eilute();
+    }
     return A;
 }

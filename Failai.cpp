@@ -24,8 +24,8 @@ void failo_generavimas(int stud_sk, const string &failo_pav){
     buf << "Pavarde Vardas ND1 ND2 ND3 ND4 ND5 Egzaminas\n";
     for (int i = 1; i <= stud_sk; i++) {
         buf << "Pavarde" << i << " Vardas" << i;
-        for (int j = 0; j < 5; j++) buf << ' ' << random_pazymys();
-        buf << ' ' << random_pazymys() << '\n';
+        for (int j = 0; j < 6; j++) buf << ' ' << random_pazymys();
+        buf << '\n';
     }
     fd << buf.str();
     fd.close();
