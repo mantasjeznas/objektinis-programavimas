@@ -7,7 +7,6 @@
 #include <sstream>
 #include <chrono>
 using std::string;
-using std::vector;
 using std::cout;
 using std::ostream;
 
@@ -24,8 +23,8 @@ void failo_generavimas(int stud_sk, const string &failo_pav){
     buf << "Pavarde Vardas ND1 ND2 ND3 ND4 ND5 Egzaminas\n";
     for (int i = 1; i <= stud_sk; i++) {
         buf << "Pavarde" << i << " Vardas" << i;
-        for (int j = 0; j < 6; j++) buf << ' ' << random_pazymys();
-        buf << '\n';
+        for (int j = 0; j < 5; j++) buf << ' ' << random_pazymys();
+        buf << ' ' << random_pazymys() << '\n';
     }
     fd << buf.str();
     fd.close();
@@ -34,24 +33,6 @@ void failo_generavimas(int stud_sk, const string &failo_pav){
     std::chrono::duration<double> trukme = end - start;
     cout << "\nsukurtas " << failo_pav << " su " << stud_sk << " irasu\n";
     cout << "trukme: " << trukme.count() << " s\n";
-}
-
-void rikiuoti_grupe(vector<studentas> &grupe, int pasirinkimas, int rikiavimas){
-    if (rikiavimas == 1) std::sort(grupe.begin(), grupe.end(), pagal_varda);
-    else if (rikiavimas == 3 && pasirinkimas == 2) std::sort(grupe.begin(), grupe.end(), pagal_mediana_mazejant);
-    else if (rikiavimas == 3) std::sort(grupe.begin(), grupe.end(), pagal_vidurki_mazejant);
-    else if (rikiavimas == 4 && pasirinkimas == 2) std::sort(grupe.begin(), grupe.end(), pagal_mediana_didejant);
-    else if (rikiavimas == 4) std::sort(grupe.begin(), grupe.end(), pagal_vidurki_didejant);
-    else std::sort(grupe.begin(), grupe.end(), pagal_pavarde);
-}
-
-void rikiuoti_grupe(std::list<studentas> &grupe, int pasirinkimas, int rikiavimas){
-    if (rikiavimas == 1) grupe.sort(pagal_varda);
-    else if (rikiavimas == 3 && pasirinkimas == 2) grupe.sort(pagal_mediana_mazejant);
-    else if (rikiavimas == 3) grupe.sort(pagal_vidurki_mazejant);
-    else if (rikiavimas == 4 && pasirinkimas == 2) grupe.sort(pagal_mediana_didejant);
-    else if (rikiavimas == 4) grupe.sort(pagal_vidurki_didejant);
-    else grupe.sort(pagal_pavarde);
 }
 
 int rikiavimo_pasirinkimas(){

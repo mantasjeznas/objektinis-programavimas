@@ -12,6 +12,8 @@ Skirstymas: kopijuojama į konteinerius “vargsiukai” ir “kietiakai”;
 Rašymas: surikiuotos grupės surašomos į vargsiukai.txt ir kietiakai.txt;
 Rūšiavimas: abi grupės surikiuojamos pagal galutinį balą (mažėjančiai).
 
+Kompiliuota su `clang++ -std=c++17 -O2 -o programa *.cpp`
+
 ## \<vector\>
 | failas | studentų | skaitymas, s | skirstymas, s | rašymas, s | rūšiavimas, s | bendras laikas s |
 |---|---:|---:|---:|---:|---:|---:|
@@ -23,7 +25,7 @@ Rūšiavimas: abi grupės surikiuojamos pagal galutinį balą (mažėjančiai).
 
 Bendras visų failų laikas 17,1186 s
 
-<img src="vector_laikai.png" width="400">
+<img src="images/vector_laikai.png" width="400">
 <br><br>
 
 **Išvada**. Kuo didesnis failas, tuo ilgiau trunka visi etapai. Nuo 1 000 iki 10 000 000 studentų bendras laikas išauga maždaug 6000 kartų, o duomenų yra 10 000 kartų daugiau. Nuo 1 000 000 iki 10 000 000 studentų jis išauga apie 12 kartų. Mažuose failuose ilgiausiai trunka skaitymas. Faile su 10 000 000 studentų skaitymas (6,25 s) ir rūšiavimas (5,83 s) užima daugiausiai laiko, rašymas trunka 2,93 s, o trumpiausiai trunka skirstymas (0,66 s).
@@ -39,7 +41,7 @@ Bendras visų failų laikas 17,1186 s
 
 Bendras visų failų laikas 25,3213 s
 
-<img src="list_laikai.png" width="400">
+<img src="images/list_laikai.png" width="400">
 <br><br>
 
 
@@ -50,3 +52,9 @@ Bendras visų failų laikas 25,3213 s
 `std::vector` yra tinkamesnis pasirinkimas didelėms studentų grupėms, nes visi etapai su juo trunka trumpiau, kai failai didesni nei 1 000 000 įrašų. Su mažesniais failais skirtumas nedidelis. Greitis didėjant failui auga maždaug proporcingai duomenų kiekiui abiem konteineriams.
 
 <sub>laikai matuoti sekundėmis</sub>
+
+## Testavimo sistemos parametrai
+
+- **CPU:** Apple M1 Pro
+- **RAM:** 16 GB
+- **Disk:** SSD

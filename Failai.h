@@ -22,8 +22,25 @@ const char *const failu_vardai[5] = {
 };
 
 void failo_generavimas(int stud_sk, const std::string &failo_pav);
-void rikiuoti_grupe(std::vector<studentas> &grupe, int pasirinkimas, int rikiavimas);
-void rikiuoti_grupe(std::list<studentas> &grupe, int pasirinkimas, int rikiavimas);
+template <class Pazymiai>
+void rikiuoti_grupe(std::vector<studentas<Pazymiai>> &grupe, int pasirinkimas, int rikiavimas){
+    if (rikiavimas == 1) std::sort(grupe.begin(), grupe.end(), pagal_varda<Pazymiai>);
+    else if (rikiavimas == 3 && pasirinkimas == 2) std::sort(grupe.begin(), grupe.end(), pagal_mediana_mazejant<Pazymiai>);
+    else if (rikiavimas == 3) std::sort(grupe.begin(), grupe.end(), pagal_vidurki_mazejant<Pazymiai>);
+    else if (rikiavimas == 4 && pasirinkimas == 2) std::sort(grupe.begin(), grupe.end(), pagal_mediana_didejant<Pazymiai>);
+    else if (rikiavimas == 4) std::sort(grupe.begin(), grupe.end(), pagal_vidurki_didejant<Pazymiai>);
+    else std::sort(grupe.begin(), grupe.end(), pagal_pavarde<Pazymiai>);
+}
+
+template <class Pazymiai>
+void rikiuoti_grupe(std::list<studentas<Pazymiai>> &grupe, int pasirinkimas, int rikiavimas){
+    if (rikiavimas == 1) grupe.sort(pagal_varda<Pazymiai>);
+    else if (rikiavimas == 3 && pasirinkimas == 2) grupe.sort(pagal_mediana_mazejant<Pazymiai>);
+    else if (rikiavimas == 3) grupe.sort(pagal_vidurki_mazejant<Pazymiai>);
+    else if (rikiavimas == 4 && pasirinkimas == 2) grupe.sort(pagal_mediana_didejant<Pazymiai>);
+    else if (rikiavimas == 4) grupe.sort(pagal_vidurki_didejant<Pazymiai>);
+    else grupe.sort(pagal_pavarde<Pazymiai>);
+}
 
 template <class Konteineris>
 void rezultatu_isvedimas(std::ostream &out, Konteineris &grupe, int pasirinkimas, int rikiavimas, bool ar_rikiuoti = true){
@@ -31,7 +48,7 @@ void rezultatu_isvedimas(std::ostream &out, Konteineris &grupe, int pasirinkimas
 
     int pavardes_ilgis = 12;
     int vardo_ilgis = 12;
-    for (const studentas &S : grupe){
+    for (const auto &S : grupe){
         if ((int)S.pavarde.size() + 2 > pavardes_ilgis) pavardes_ilgis = (int)S.pavarde.size() + 2;
         if ((int)S.vardas.size() + 2 > vardo_ilgis) vardo_ilgis = (int)S.vardas.size() + 2;
     }
@@ -46,11 +63,11 @@ void rezultatu_isvedimas(std::ostream &out, Konteineris &grupe, int pasirinkimas
     if (pasirinkimas == 3) linijos_ilgis = pavardes_ilgis + vardo_ilgis + 34;
     buf << std::string(linijos_ilgis, '-') << "\n";
 
-    for (const studentas &S : grupe) printas(buf, S, pasirinkimas, pavardes_ilgis, vardo_ilgis);
+    for (const auto &S : grupe) printas(buf, S, pasirinkimas, pavardes_ilgis, vardo_ilgis);
     out << buf.str();
 }
 
-template <class Konteineris>
+template <class Pazymiai, class Konteineris>
 bool nuskaityti_faila(const std::string &pav, Konteineris &grupe){
     std::ifstream fd(pav);
     if (!fd) return false;
@@ -62,7 +79,7 @@ bool nuskaityti_faila(const std::string &pav, Konteineris &grupe){
     fd.close();
     getline(buf, eilute);
 
-    studentas A;
+    studentas<Pazymiai> A;
     std::stringstream ss;
     while (getline(buf, eilute)){
         ss.clear();
@@ -100,14 +117,14 @@ void irasyti_kategorijas(Konteineris &vargsiukai, Konteineris &kietiakai, int pa
 
 void failu_generavimo_meniu();
 
-template <class Konteineris>
+template <class Konteineris, class Pazymiai>
 double greicio_analize(const std::string &pav){
     const int kartai = 3;
     Konteineris grupe;
     Konteineris kietiakai;
     Konteineris vargsiukai;
 
-    if (!nuskaityti_faila(pav, grupe)){
+    if (!nuskaityti_faila<Pazymiai>(pav, grupe)){
         std::cout << "\nnerasta " << pav << ". sugeneruokite meniu 5 punktu.\n";
         return 0;
     }
@@ -119,7 +136,7 @@ double greicio_analize(const std::string &pav){
 
     for (int i = 0; i < kartai; i++){
         auto start = std::chrono::steady_clock::now();
-        if (!nuskaityti_faila(pav, grupe)){
+        if (!nuskaityti_faila<Pazymiai>(pav, grupe)){
             std::cout << "\nNepavyko skaityti " << pav << "\n";
             return 0;
         }
@@ -170,7 +187,7 @@ double greicio_analize(const std::string &pav){
     return bendras;
 }
 
-template <class Konteineris>
+template <class Konteineris, class Pazymiai>
 void greicio_analize_meniu(){
     int esami[5];
     int n = 0;
@@ -195,10 +212,10 @@ void greicio_analize_meniu(){
 
     if (n > 1 && kiekis == n + 1) {
         double bendras = 0;
-        for (int i = 0; i < n; i++) bendras += greicio_analize<Konteineris>(failu_vardai[esami[i]]);
+        for (int i = 0; i < n; i++) bendras += greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[i]]);
         std::cout << "\nBendras visu failu laikas: " << bendras << " s\n";
     } else {
-        greicio_analize<Konteineris>(failu_vardai[esami[kiekis - 1]]);
+        greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[kiekis - 1]]);
     }
 }
 

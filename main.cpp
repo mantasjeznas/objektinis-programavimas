@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <sstream>
+#include <stdexcept>
 #include "Studentas.h"
 #include "Pagalbiniai.h"
 #include "Failai.h"
@@ -13,7 +15,7 @@ using std::vector;
 using std::cout;
 using std::cin;
 
-template <class Konteineris>
+template <class Konteineris, class Pazymiai>
 void programa(){
     Konteineris grupe;
     Konteineris kietiakai;
@@ -45,7 +47,7 @@ void programa(){
 
             ignoruoti_eilute();
             for (int j=0;j<n;j++){
-                grupe.push_back(ivesti_studenta());
+                grupe.push_back(ivesti_studenta<Pazymiai>());
                 cout << "objekto adresas: " << &grupe.back() << "\n";
                 ar_suskirstyta = false;
             }
@@ -130,7 +132,7 @@ void programa(){
             string pav;
             cout << "Iveskite failo pav.: ";
             cin >> pav;
-            if (!nuskaityti_faila(pav, grupe)){
+            if (!nuskaityti_faila<Pazymiai>(pav, grupe)){
                 cout << "\nFailas nerastas.\n";
                 continue;
             }
@@ -140,7 +142,7 @@ void programa(){
         else if (meniu_veiksmas == 5){
             failu_generavimo_meniu();
         } else if (meniu_veiksmas == 6){
-            greicio_analize_meniu<Konteineris>();
+            greicio_analize_meniu<Konteineris, Pazymiai>();
         }
         else if (meniu_veiksmas != 0){
             cout << "\nTokio pasirinkimo nera!\n";
@@ -157,7 +159,7 @@ int main(){
     int konteineris = pasirinkimas_tarp(1, 2);
     ignoruoti_eilute();
 
-    if (konteineris == 1) programa<vector<studentas>>();
-    else programa<std::list<studentas>>();
+    if (konteineris == 1) programa<vector<studentas<vector<int>>>, vector<int>>();
+    else programa<std::list<studentas<std::list<int>>>, std::list<int>>();
     return 0;
 }

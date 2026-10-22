@@ -4,30 +4,179 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <iomanip>
+#include <algorithm>
+#include <stdexcept>
+#include "Pagalbiniai.h"
 
+template <class Pazymiai>
 struct studentas {
     std::string vardas, pavarde;
-    std::vector<int> paz;
+    Pazymiai paz;
     int exam;
 };
 
-double vidurkis(const studentas &A);
-double mediana(const studentas &A);
-double galutinis(const studentas &A, bool ar_mediana);
-void printas(std::ostream &out, const studentas &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis);
-bool pagal_pavarde(const studentas &a, const studentas &b);
-bool pagal_varda(const studentas &a, const studentas &b);
-bool pagal_vidurki_mazejant(const studentas &a, const studentas &b);
-bool pagal_vidurki_didejant(const studentas &a, const studentas &b);
-bool pagal_mediana_mazejant(const studentas &a, const studentas &b);
-bool pagal_mediana_didejant(const studentas &a, const studentas &b);
-studentas ivesti_studenta();
+template <class Pazymiai>
+double vidurkis(const studentas<Pazymiai> &A){
+    if (A.paz.empty()) return 0;
+    double suma = 0;
+    for (int p : A.paz){
+        suma += p;
+    }
+    return suma / A.paz.size();
+}
+
+template <class Pazymiai>
+double mediana(const studentas<Pazymiai> &A){
+    if (A.paz.empty()) return 0;
+    std::vector<int> laikinas(A.paz.begin(), A.paz.end());
+    std::sort(laikinas.begin(), laikinas.end());
+    int n = laikinas.size();
+    if (n % 2 == 1) return laikinas[n / 2];
+    return (laikinas[n / 2 - 1] + laikinas[n / 2]) / 2.0;
+}
+
+template <class Pazymiai>
+double galutinis(const studentas<Pazymiai> &A, bool ar_mediana){
+    if (ar_mediana == true){
+        return 0.4 * mediana(A) + 0.6 * A.exam;
+    }
+    return 0.4 * vidurkis(A) + 0.6 * A.exam;
+}
+
+template <class Pazymiai>
+void printas(std::ostream &out, const studentas<Pazymiai> &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis){
+    out << std::left << std::setw(pavardes_ilgis) << A.pavarde
+        << std::left << std::setw(vardo_ilgis) << A.vardas
+        << std::fixed << std::setprecision(2);
+
+    if (pasirinkimas == 1){
+        out << galutinis(A, false) << "\n";
+    } else if (pasirinkimas == 2){
+        out << galutinis(A, true) << "\n";
+    } else{
+        out << std::left << std::setw(18) << galutinis(A, false) << galutinis(A, true) << "\n";
+    }
+}
+
+template <class Pazymiai>
+bool pagal_pavarde(const studentas<Pazymiai> &a, const studentas<Pazymiai> &b){
+    if (a.pavarde == b.pavarde) return a.vardas < b.vardas;
+    return a.pavarde < b.pavarde;
+}
+
+template <class Pazymiai>
+bool pagal_varda(const studentas<Pazymiai> &a, const studentas<Pazymiai> &b){
+    if (a.vardas == b.vardas) return a.pavarde < b.pavarde;
+    return a.vardas < b.vardas;
+}
+
+template <class Pazymiai>
+bool pagal_vidurki_mazejant(const studentas<Pazymiai> &a, const studentas<Pazymiai> &b){
+    if (galutinis(a, false) == galutinis(b, false)) return pagal_pavarde(a, b);
+    return galutinis(a, false) > galutinis(b, false);
+}
+
+template <class Pazymiai>
+bool pagal_vidurki_didejant(const studentas<Pazymiai> &a, const studentas<Pazymiai> &b){
+    if (galutinis(a, false) == galutinis(b, false)) return pagal_pavarde(a, b);
+    return galutinis(a, false) < galutinis(b, false);
+}
+
+template <class Pazymiai>
+bool pagal_mediana_mazejant(const studentas<Pazymiai> &a, const studentas<Pazymiai> &b){
+    if (galutinis(a, true) == galutinis(b, true)) return pagal_pavarde(a, b);
+    return galutinis(a, true) > galutinis(b, true);
+}
+
+template <class Pazymiai>
+bool pagal_mediana_didejant(const studentas<Pazymiai> &a, const studentas<Pazymiai> &b){
+    if (galutinis(a, true) == galutinis(b, true)) return pagal_pavarde(a, b);
+    return galutinis(a, true) < galutinis(b, true);
+}
+
+template <class Pazymiai>
+studentas<Pazymiai> ivesti_studenta(){
+    studentas<Pazymiai> A;
+        std::cout<<"Iveskite per tarpa studento varda ir pavarde: ";
+        std::cin>>A.vardas>>A.pavarde;
+        ignoruoti_eilute();
+
+        std::cout << "1 - pazymius vesti ranka, 2 - generuoti atsitiktinai: ";
+        int rezimas = skaicius_input();
+        while (rezimas != 1 && rezimas != 2) {
+            std::cout << "Klaida. Iveskite 1 arba 2: ";
+            rezimas = skaicius_input();
+        }
+        ignoruoti_eilute();
+
+        std::cout<<"Iveskite semestro paz. kieki: ";
+
+        if (rezimas == 2){
+            int k = skaicius_input();
+            while (k < 0){
+                std::cout << "Pazymiu kiekis negali buti neigiamas!\n";
+                std::cout<<"Iveskite semestro paz. kieki: ";
+                k = skaicius_input();
+            }
+            for (int i = 0; i < k; i++){
+                A.paz.push_back(random_pazymys());
+            }
+            A.exam = random_pazymys();
+            ignoruoti_eilute();
+        } else{
+            std::string ivedimas;
+            getline(std::cin, ivedimas);
+
+            if (ivedimas.empty()){
+            int i = 0;
+            while(true){
+                std::cout << "Iveskite " << i + 1 << " paz: ";
+                getline(std::cin, ivedimas);
+                if (ivedimas.empty()) break;
+                try{
+                    int paz = std::stoi(ivedimas);
+                    if (paz < 0 || paz > 10){
+                        std::cout << "Pazymys turi buti nuo 0 iki 10\n";
+                        continue;
+                    }
+                    A.paz.push_back(paz);
+                    i++;
+                } catch(const std::exception&){
+                    std::cout << "Klaida. Iveskite skaiciu\n";
+                }
+            }
+            } else{
+                int k;
+                try{
+                    k = std::stoi(ivedimas);
+                } catch (const std::exception&){
+                k = -1;
+                }
+                while (k < 0){
+                    std::cout << "Bloga ivestis. Iveskite semestro paz. kieki: \n";
+                    k = skaicius_input();
+                }
+                for (int i = 0; i < k; i++){
+                    std::cout << "Iveskite " << i + 1 << " paz: ";
+                    int a = pazymio_apribojimas();
+                    A.paz.push_back(a);
+                }
+                ignoruoti_eilute();
+            }
+
+        std::cout<<"Iveskite semestro Egzamino paz.: "; A.exam = pazymio_apribojimas();
+        ignoruoti_eilute();
+
+        }
+    return A;
+}
 
 template <class Konteineris>
 void skirstymas(const Konteineris &grupe, Konteineris &kietiakai, Konteineris &vargsiukai, bool ar_mediana){
     vargsiukai.clear();
     kietiakai.clear();
-    for (const studentas &S : grupe){
+    for (const auto &S : grupe){
         if (galutinis(S, ar_mediana) < 5.0) vargsiukai.push_back(S);
         else kietiakai.push_back(S);
     }
