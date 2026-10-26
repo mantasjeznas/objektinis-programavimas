@@ -111,7 +111,7 @@ void programa(){
                 int pagal = pasirinkimas_tarp(1, 2);
 
                 skirstymo_mediana = (pagal == 2);
-                skirstymas(grupe, kietiakai, vargsiukai, skirstymo_mediana);
+                strategija1(grupe, vargsiukai, kietiakai, skirstymo_mediana);
                 ar_suskirstyta = true;
                 cout << "\nVargsiukai (galutinis < 5): " << vargsiukai.size() << "\n";
                 cout << "Kietiakai (galutinis >= 5): " << kietiakai.size() << "\n";

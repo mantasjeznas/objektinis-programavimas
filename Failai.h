@@ -136,6 +136,8 @@ double greicio_analize(const std::string &pav){
     double t_rasymas = 0;
     double t_rusiavimas = 0;
 
+    int studentu_sk = 0;
+
     for (int i = 0; i < kartai; i++){
         auto start = std::chrono::steady_clock::now();
         if (!nuskaityti_faila<Pazymiai>(pav, grupe)){
@@ -144,12 +146,11 @@ double greicio_analize(const std::string &pav){
         }
         auto end = std::chrono::steady_clock::now();
         t_skaitymas += std::chrono::duration<double>(end - start).count();
-    }
+        studentu_sk = grupe.size();
 
-    for (int i = 0; i < kartai; i++){
-        auto start = std::chrono::steady_clock::now();
-        skirstymas(grupe, kietiakai, vargsiukai, false);
-        auto end = std::chrono::steady_clock::now();
+        start = std::chrono::steady_clock::now();
+        strategija1(grupe, vargsiukai, kietiakai, false);
+        end = std::chrono::steady_clock::now();
         t_skirstymas += std::chrono::duration<double>(end - start).count();
 
         start = std::chrono::steady_clock::now();
@@ -157,10 +158,8 @@ double greicio_analize(const std::string &pav){
         rikiuoti_grupe(kietiakai, 1, 3);
         end = std::chrono::steady_clock::now();
         t_rusiavimas += std::chrono::duration<double>(end - start).count();
-    }
 
-    for (int i = 0; i < kartai; i++){
-        auto start = std::chrono::steady_clock::now();
+        start = std::chrono::steady_clock::now();
         std::ofstream varg("vargsiukai.txt");
         std::ofstream kiet("kietiakai.txt");
         if (!varg || !kiet){
@@ -171,14 +170,14 @@ double greicio_analize(const std::string &pav){
         rezultatu_isvedimas(kiet, kietiakai, 1, 3, false);
         varg.close();
         kiet.close();
-        auto end = std::chrono::steady_clock::now();
+        end = std::chrono::steady_clock::now();
         t_rasymas += std::chrono::duration<double>(end - start).count();
     }
 
     std::cout << "\n--- " << pav << " (" << kartai << " kartu vidurkiai) ---\n";
     std::cout << std::defaultfloat << std::setprecision(6);
     std::cout << std::left
-     << std::setw(15) << "Studentu sk" << "| " << grupe.size() << "\n"
+     << std::setw(15) << "Studentu sk" << "| " << studentu_sk << "\n"
      << std::setw(15) << "Skaitymas" << "| " << t_skaitymas / kartai << " s\n"
      << std::setw(15) << "Skirstymas" << "| " << t_skirstymas / kartai << " s\n"
      << std::setw(15) << "Rasymas" << "| " << t_rasymas / kartai << " s\n"

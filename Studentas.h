@@ -174,7 +174,7 @@ studentas<Pazymiai> ivesti_studenta(){
 }
 
 template <class Konteineris>
-void skirstymas(const Konteineris &grupe, Konteineris &kietiakai, Konteineris &vargsiukai, bool ar_mediana){
+void strategija1(const Konteineris &grupe, Konteineris &vargsiukai, Konteineris &kietiakai, bool ar_mediana){
     vargsiukai.clear();
     kietiakai.clear();
     for (const auto &S : grupe){
