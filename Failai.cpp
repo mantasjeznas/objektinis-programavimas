@@ -1,14 +1,11 @@
 #include "Failai.h"
 #include "Pagalbiniai.h"
 #include <fstream>
-#include <iomanip>
-#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <chrono>
 using std::string;
 using std::cout;
-using std::ostream;
 
 void failo_generavimas(int stud_sk, const string &failo_pav){
     auto start = std::chrono::steady_clock::now();
