@@ -124,10 +124,12 @@ double greicio_analize(const std::string &pav){
     Konteineris kietiakai;
     Konteineris vargsiukai;
 
-    if (!nuskaityti_faila<Pazymiai>(pav, grupe)){
+    std::ifstream patikra(pav);
+    if (!patikra){
         std::cout << "\nnerasta " << pav << ". sugeneruokite meniu 5 punktu.\n";
         return 0;
     }
+    patikra.close();
 
     double t_skaitymas = 0;
     double t_skirstymas = 0;

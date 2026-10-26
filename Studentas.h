@@ -98,37 +98,37 @@ bool pagal_mediana_didejant(const studentas<Pazymiai> &a, const studentas<Pazymi
 template <class Pazymiai>
 studentas<Pazymiai> ivesti_studenta(){
     studentas<Pazymiai> A;
-        std::cout<<"Iveskite per tarpa studento varda ir pavarde: ";
-        std::cin>>A.vardas>>A.pavarde;
-        ignoruoti_eilute();
+    std::cout<<"Iveskite per tarpa studento varda ir pavarde: ";
+    std::cin>>A.vardas>>A.pavarde;
+    ignoruoti_eilute();
 
-        std::cout << "1 - pazymius vesti ranka, 2 - generuoti atsitiktinai: ";
-        int rezimas = skaicius_input();
-        while (rezimas != 1 && rezimas != 2) {
-            std::cout << "Klaida. Iveskite 1 arba 2: ";
-            rezimas = skaicius_input();
+    std::cout << "1 - pazymius vesti ranka, 2 - generuoti atsitiktinai: ";
+    int rezimas = skaicius_input();
+    while (rezimas != 1 && rezimas != 2) {
+        std::cout << "Klaida. Iveskite 1 arba 2: ";
+        rezimas = skaicius_input();
+    }
+    ignoruoti_eilute();
+
+    std::cout<<"Iveskite semestro paz. kieki: ";
+
+    if (rezimas == 2){
+        int k = skaicius_input();
+        while (k < 0){
+            std::cout << "Pazymiu kiekis negali buti neigiamas!\n";
+            std::cout<<"Iveskite semestro paz. kieki: ";
+            k = skaicius_input();
         }
+        for (int i = 0; i < k; i++){
+            A.paz.push_back(random_pazymys());
+        }
+        A.exam = random_pazymys();
         ignoruoti_eilute();
+    } else{
+        std::string ivedimas;
+        getline(std::cin, ivedimas);
 
-        std::cout<<"Iveskite semestro paz. kieki: ";
-
-        if (rezimas == 2){
-            int k = skaicius_input();
-            while (k < 0){
-                std::cout << "Pazymiu kiekis negali buti neigiamas!\n";
-                std::cout<<"Iveskite semestro paz. kieki: ";
-                k = skaicius_input();
-            }
-            for (int i = 0; i < k; i++){
-                A.paz.push_back(random_pazymys());
-            }
-            A.exam = random_pazymys();
-            ignoruoti_eilute();
-        } else{
-            std::string ivedimas;
-            getline(std::cin, ivedimas);
-
-            if (ivedimas.empty()){
+        if (ivedimas.empty()){
             int i = 0;
             while(true){
                 std::cout << "Iveskite " << i + 1 << " paz: ";
@@ -146,29 +146,30 @@ studentas<Pazymiai> ivesti_studenta(){
                     std::cout << "Klaida. Iveskite skaiciu\n";
                 }
             }
-            } else{
-                int k;
-                try{
-                    k = std::stoi(ivedimas);
-                } catch (const std::exception&){
+        } else{
+            int k;
+            try{
+                k = std::stoi(ivedimas);
+            } catch (const std::exception&){
                 k = -1;
-                }
-                while (k < 0){
-                    std::cout << "Bloga ivestis. Iveskite semestro paz. kieki: \n";
-                    k = skaicius_input();
-                }
-                for (int i = 0; i < k; i++){
-                    std::cout << "Iveskite " << i + 1 << " paz: ";
-                    int a = pazymio_apribojimas();
-                    A.paz.push_back(a);
-                }
+            }
+            while (k < 0){
+                std::cout << "Bloga ivestis. Iveskite semestro paz. kieki: ";
+                k = skaicius_input();
                 ignoruoti_eilute();
             }
+            for (int i = 0; i < k; i++){
+                std::cout << "Iveskite " << i + 1 << " paz: ";
+                int a = pazymio_apribojimas();
+                A.paz.push_back(a);
+            }
+            if (k > 0) ignoruoti_eilute();
+        }
 
         std::cout<<"Iveskite semestro Egzamino paz.: "; A.exam = pazymio_apribojimas();
         ignoruoti_eilute();
 
-        }
+    }
     return A;
 }
 
