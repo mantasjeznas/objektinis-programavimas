@@ -183,4 +183,18 @@ void strategija1(const Konteineris &grupe, Konteineris &vargsiukai, Konteineris 
     }
 }
 
+template <class Konteineris>
+void strategija2(Konteineris &grupe, Konteineris &vargsiukai, bool ar_mediana){
+    vargsiukai.clear();
+    auto it = grupe.begin();
+    while (it != grupe.end()){
+        if (galutinis(*it, ar_mediana) < 5.0){
+            vargsiukai.push_back(*it);
+            it = grupe.erase(it);
+        } else{
+            ++it;
+        }
+    }
+}
+
 #endif

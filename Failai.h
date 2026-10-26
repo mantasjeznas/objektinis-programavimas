@@ -118,7 +118,7 @@ void irasyti_kategorijas(Konteineris &vargsiukai, Konteineris &kietiakai, int pa
 void failu_generavimo_meniu();
 
 template <class Konteineris, class Pazymiai>
-double greicio_analize(const std::string &pav){
+double greicio_analize(const std::string &pav, int strategija){
     const int kartai = 3;
     Konteineris grupe;
     Konteineris kietiakai;
@@ -149,13 +149,15 @@ double greicio_analize(const std::string &pav){
         studentu_sk = grupe.size();
 
         start = std::chrono::steady_clock::now();
-        strategija1(grupe, vargsiukai, kietiakai, false);
+        if (strategija == 1) strategija1(grupe, vargsiukai, kietiakai, false);
+        else strategija2(grupe, vargsiukai, false);
         end = std::chrono::steady_clock::now();
         t_skirstymas += std::chrono::duration<double>(end - start).count();
 
         start = std::chrono::steady_clock::now();
         rikiuoti_grupe(vargsiukai, 1, 3);
-        rikiuoti_grupe(kietiakai, 1, 3);
+        if (strategija == 1) rikiuoti_grupe(kietiakai, 1, 3);
+        else rikiuoti_grupe(grupe, 1, 3);
         end = std::chrono::steady_clock::now();
         t_rusiavimas += std::chrono::duration<double>(end - start).count();
 
@@ -167,14 +169,15 @@ double greicio_analize(const std::string &pav){
             return 0;
         }
         rezultatu_isvedimas(varg, vargsiukai, 1, 3, false);
-        rezultatu_isvedimas(kiet, kietiakai, 1, 3, false);
+        if (strategija == 1) rezultatu_isvedimas(kiet, kietiakai, 1, 3, false);
+        else rezultatu_isvedimas(kiet, grupe, 1, 3, false);
         varg.close();
         kiet.close();
         end = std::chrono::steady_clock::now();
         t_rasymas += std::chrono::duration<double>(end - start).count();
     }
 
-    std::cout << "\n--- " << pav << " (" << kartai << " kartu vidurkiai) ---\n";
+    std::cout << "\n--- " << pav << ", " << strategija << " strategija (" << kartai << " kartu vidurkiai) ---\n";
     std::cout << std::defaultfloat << std::setprecision(6);
     std::cout << std::left
      << std::setw(15) << "Studentu sk" << "| " << studentu_sk << "\n"
@@ -211,12 +214,18 @@ void greicio_analize_meniu(){
     int kiekis = pasirinkimas_tarp(1, max_pasirinkimas);
     ignoruoti_eilute();
 
+    std::cout << "\nKuri skirstymo strategija?\n"
+    << "1 - kopijuoti i du naujus konteinerius\n"
+    << "2 - perkelti vargsiukus ir istrinti is pradinio\n";
+    int strategija = pasirinkimas_tarp(1, 2);
+    ignoruoti_eilute();
+
     if (n > 1 && kiekis == n + 1) {
         double bendras = 0;
-        for (int i = 0; i < n; i++) bendras += greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[i]]);
+        for (int i = 0; i < n; i++) bendras += greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[i]], strategija);
         std::cout << "\nBendras visu failu laikas: " << bendras << " s\n";
     } else {
-        greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[kiekis - 1]]);
+        greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[kiekis - 1]], strategija);
     }
 }
 
