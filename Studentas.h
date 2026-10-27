@@ -223,10 +223,12 @@ template <class Pazymiai>
 void strategija3(std::list<studentas<Pazymiai>> &grupe, std::list<studentas<Pazymiai>> &vargsiukai, bool ar_mediana){
     vargsiukai.clear();
     auto it = grupe.begin();
-    if (ar_mediana) it = std::stable_partition(grupe.begin(), grupe.end(), kietiakas_med<Pazymiai>);
-    else it = std::stable_partition(grupe.begin(), grupe.end(), kietiakas_vid<Pazymiai>);
-    std::copy(it, grupe.end(), std::back_inserter(vargsiukai));
-    grupe.erase(it, grupe.end());
+    while (it != grupe.end()){
+        auto kitas = it;
+        ++kitas;
+        if (galutinis(*it, ar_mediana) < 5.0) vargsiukai.splice(vargsiukai.end(), grupe, it);
+        it = kitas;
+    }
 }
 
 #endif
