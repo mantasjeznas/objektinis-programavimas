@@ -129,15 +129,17 @@ void programa(){
 
                 cout << "\nKuri skirstymo strategija?\n"
                 << "1 - kopijuoti i du naujus konteinerius\n"
-                << "2 - perkelti vargsiukus ir istrinti is pradinio\n";
-                skirstymo_strategija = pasirinkimas_tarp(1, 2);
+                << "2 - perkelti vargsiukus ir istrinti is pradinio\n"
+                << "3 - algoritmai (stable_partition, copy, erase)\n";
+                skirstymo_strategija = pasirinkimas_tarp(1, 3);
 
                 skirstymo_mediana = (pagal == 2);
                 if (skirstymo_strategija == 1) {
                     strategija1(grupe, vargsiukai, kietiakai, skirstymo_mediana);
                 } else {
                     kietiakai.clear();
-                    strategija2(grupe, vargsiukai, skirstymo_mediana);
+                    if (skirstymo_strategija == 2) strategija2(grupe, vargsiukai, skirstymo_mediana);
+                    else strategija3(grupe, vargsiukai, skirstymo_mediana);
                     vargsiukai_atskirti = true;
                 }
                 ar_suskirstyta = true;

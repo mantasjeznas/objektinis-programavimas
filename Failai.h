@@ -150,7 +150,8 @@ double greicio_analize(const std::string &pav, int strategija){
 
         start = std::chrono::steady_clock::now();
         if (strategija == 1) strategija1(grupe, vargsiukai, kietiakai, false);
-        else strategija2(grupe, vargsiukai, false);
+        else if (strategija == 2) strategija2(grupe, vargsiukai, false);
+        else strategija3(grupe, vargsiukai, false);
         end = std::chrono::steady_clock::now();
         t_skirstymas += std::chrono::duration<double>(end - start).count();
 
@@ -216,8 +217,9 @@ void greicio_analize_meniu(){
 
     std::cout << "\nKuri skirstymo strategija?\n"
     << "1 - kopijuoti i du naujus konteinerius\n"
-    << "2 - perkelti vargsiukus ir istrinti is pradinio\n";
-    int strategija = pasirinkimas_tarp(1, 2);
+    << "2 - perkelti vargsiukus ir istrinti is pradinio\n"
+    << "3 - algoritmai (stable_partition, copy, erase)\n";
+    int strategija = pasirinkimas_tarp(1, 3);
     ignoruoti_eilute();
 
     if (n > 1 && kiekis == n + 1) {

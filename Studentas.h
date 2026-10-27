@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <list>
+#include <iterator>
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
@@ -93,6 +95,16 @@ template <class Pazymiai>
 bool pagal_mediana_didejant(const studentas<Pazymiai> &a, const studentas<Pazymiai> &b){
     if (galutinis(a, true) == galutinis(b, true)) return pagal_pavarde(a, b);
     return galutinis(a, true) < galutinis(b, true);
+}
+
+template <class Pazymiai>
+bool kietiakas_vid(const studentas<Pazymiai> &A){
+    return galutinis(A, false) >= 5.0;
+}
+
+template <class Pazymiai>
+bool kietiakas_med(const studentas<Pazymiai> &A){
+    return galutinis(A, true) >= 5.0;
 }
 
 template <class Pazymiai>
@@ -195,6 +207,26 @@ void strategija2(Konteineris &grupe, Konteineris &vargsiukai, bool ar_mediana){
             ++it;
         }
     }
+}
+
+template <class Pazymiai>
+void strategija3(std::vector<studentas<Pazymiai>> &grupe, std::vector<studentas<Pazymiai>> &vargsiukai, bool ar_mediana){
+    vargsiukai.clear();
+    auto it = grupe.begin();
+    if (ar_mediana) it = std::stable_partition(grupe.begin(), grupe.end(), kietiakas_med<Pazymiai>);
+    else it = std::stable_partition(grupe.begin(), grupe.end(), kietiakas_vid<Pazymiai>);
+    std::copy(it, grupe.end(), std::back_inserter(vargsiukai));
+    grupe.erase(it, grupe.end());
+}
+
+template <class Pazymiai>
+void strategija3(std::list<studentas<Pazymiai>> &grupe, std::list<studentas<Pazymiai>> &vargsiukai, bool ar_mediana){
+    vargsiukai.clear();
+    auto it = grupe.begin();
+    if (ar_mediana) it = std::stable_partition(grupe.begin(), grupe.end(), kietiakas_med<Pazymiai>);
+    else it = std::stable_partition(grupe.begin(), grupe.end(), kietiakas_vid<Pazymiai>);
+    std::copy(it, grupe.end(), std::back_inserter(vargsiukai));
+    grupe.erase(it, grupe.end());
 }
 
 #endif
