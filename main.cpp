@@ -13,6 +13,12 @@ using std::vector;
 using std::cout;
 using std::cin;
 
+template <class Konteineris>
+void grazinti_vargsiukus(Konteineris &grupe, Konteineris &vargsiukai){
+    grupe.insert(grupe.end(), vargsiukai.begin(), vargsiukai.end());
+    vargsiukai.clear();
+}
+
 template <class Konteineris, class Pazymiai>
 void programa(){
     Konteineris grupe;
@@ -20,6 +26,8 @@ void programa(){
     Konteineris vargsiukai;
     bool ar_suskirstyta = false;
     bool skirstymo_mediana = false;
+    int skirstymo_strategija = 1;
+    bool vargsiukai_atskirti = false;
 
     int meniu_veiksmas = -1;
     while (meniu_veiksmas != 0) {
@@ -51,6 +59,11 @@ void programa(){
             }
         }
         else if (meniu_veiksmas == 2) {
+            if (vargsiukai_atskirti) {
+                grazinti_vargsiukus(grupe, vargsiukai);
+                vargsiukai_atskirti = false;
+                ar_suskirstyta = false;
+            }
             if (grupe.empty()) {
                 cout << "\nNera studentu.\n";
                 continue;
@@ -100,6 +113,10 @@ void programa(){
             int veiksmas = pasirinkimas_tarp(1, 2);
 
             if (veiksmas == 1){
+                if (vargsiukai_atskirti) {
+                    grazinti_vargsiukus(grupe, vargsiukai);
+                    vargsiukai_atskirti = false;
+                }
                 if (grupe.empty()) {
                     cout << "\nNera studentu.\n";
                     continue;
@@ -110,11 +127,23 @@ void programa(){
                 << "2 - mediana\n";
                 int pagal = pasirinkimas_tarp(1, 2);
 
+                cout << "\nKuri skirstymo strategija?\n"
+                << "1 - kopijuoti i du naujus konteinerius\n"
+                << "2 - perkelti vargsiukus ir istrinti is pradinio\n";
+                skirstymo_strategija = pasirinkimas_tarp(1, 2);
+
                 skirstymo_mediana = (pagal == 2);
-                strategija1(grupe, vargsiukai, kietiakai, skirstymo_mediana);
+                if (skirstymo_strategija == 1) {
+                    strategija1(grupe, vargsiukai, kietiakai, skirstymo_mediana);
+                } else {
+                    kietiakai.clear();
+                    strategija2(grupe, vargsiukai, skirstymo_mediana);
+                    vargsiukai_atskirti = true;
+                }
                 ar_suskirstyta = true;
                 cout << "\nVargsiukai (galutinis < 5): " << vargsiukai.size() << "\n";
-                cout << "Kietiakai (galutinis >= 5): " << kietiakai.size() << "\n";
+                if (skirstymo_strategija == 1) cout << "Kietiakai (galutinis >= 5): " << kietiakai.size() << "\n";
+                else cout << "Kietiakai (galutinis >= 5): " << grupe.size() << "\n";
             } else {
                 if (!ar_suskirstyta){
                     cout << "\nPirmiausia suskirstykite.\n";
@@ -123,7 +152,8 @@ void programa(){
 
                 int rikiavimas = rikiavimo_pasirinkimas();
                 int pasirinkimas = skirstymo_mediana ? 2 : 1;
-                irasyti_kategorijas(vargsiukai, kietiakai, pasirinkimas, rikiavimas);
+                if (skirstymo_strategija == 1) irasyti_kategorijas(vargsiukai, kietiakai, pasirinkimas, rikiavimas);
+                else irasyti_kategorijas(vargsiukai, grupe, pasirinkimas, rikiavimas);
             }
         }
         else if (meniu_veiksmas == 4){
@@ -135,6 +165,8 @@ void programa(){
                 continue;
             }
             ar_suskirstyta = false;
+            vargsiukai_atskirti = false;
+            vargsiukai.clear();
             cout << "\nDuomenys nuskaityti is " << pav << ". Studentu sk: " <<grupe.size() << "\n";
         }
         else if (meniu_veiksmas == 5){
