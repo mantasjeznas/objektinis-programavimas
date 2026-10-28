@@ -10,8 +10,8 @@ using std::cout;
 void failo_generavimas(int stud_sk, const string &failo_pav){
     auto start = std::chrono::steady_clock::now();
 
-    std::ofstream fd(failo_pav);
-    if (!fd) {
+    std::ofstream fr(failo_pav);
+    if (!fr) {
         cout << "Nepavyko sukurti " << failo_pav << "\n";
         return;
     }
@@ -23,8 +23,8 @@ void failo_generavimas(int stud_sk, const string &failo_pav){
         for (int j = 0; j < 5; j++) buf << ' ' << random_pazymys();
         buf << ' ' << random_pazymys() << '\n';
     }
-    fd << buf.str();
-    fd.close();
+    fr << buf.str();
+    fr.close();
 
     auto end = std::chrono::steady_clock::now();
     std::chrono::duration<double> trukme = end - start;
@@ -45,18 +45,18 @@ int rikiavimo_pasirinkimas(){
 
 void failu_generavimo_meniu(){
     cout << "\nKuri faila generuoti?\n"
-    << "1 - 1,000 studentu | studentai1000.txt\n"
-    << "2 - 10,000 studentu | studentai10000.txt\n"
-    << "3 - 100,000 studentu | studentai100000.txt\n"
-    << "4 - 1,000,000 studentu | studentai1000000.txt\n"
-    << "5 - 10,000,000 studentu | studentai10000000.txt\n"
+    << "1 - 1,000 studentu | stud1000.txt\n"
+    << "2 - 10,000 studentu | stud10000.txt\n"
+    << "3 - 100,000 studentu | stud100000.txt\n"
+    << "4 - 1,000,000 studentu | stud1000000.txt\n"
+    << "5 - 10,000,000 studentu | stud10000000.txt\n"
     << "6 - visus penkis\n";
-    int kiekis = pasirinkimas_tarp(1, 6);
+    int failo_nr = pasirinkimas_tarp(1, 6);
     ignoruoti_eilute();
 
-    if (kiekis == 6) {
+    if (failo_nr == 6) {
         for (int i = 0; i < 5; i++) failo_generavimas(failu_kiekiai[i], failu_vardai[i]);
     } else {
-        failo_generavimas(failu_kiekiai[kiekis - 1], failu_vardai[kiekis - 1]);
+        failo_generavimas(failu_kiekiai[failo_nr - 1], failu_vardai[failo_nr - 1]);
     }
 }

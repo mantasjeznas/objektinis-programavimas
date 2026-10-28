@@ -10,7 +10,7 @@ int skaicius_input(){
     while (!(cin >> sk)) {
         cout << "Netinkama ivestis. Iveskite skaiciu: ";
         cin.clear();
-        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        ignoruoti_eilute();
     }
     return sk;
 }
@@ -32,11 +32,10 @@ int random_pazymys(){
 }
 
 int pasirinkimas_tarp(int nuo, int iki){
-    int x = nuo - 1;
-    while (x < nuo || x > iki){
+    while (true) {
         cout << "Pasirinkimas: ";
-        x = skaicius_input();
-        if (x < nuo || x > iki) cout << "Tokio pasirinkimo nera\n";
+        int x = skaicius_input();
+        if (x >= nuo && x <= iki) return x;
+        cout << "Tokio pasirinkimo nera\n";
     }
-    return x;
 }

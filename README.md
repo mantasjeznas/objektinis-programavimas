@@ -3,7 +3,7 @@ VU objektinio programavimo projektas
 
 ## v0.3 greičio (spartos) rezultatai
 
-Testavimas atliktas su jau sugeneruotais failais studentai1000.txt - studentai10000000.txt.
+Testavimas atliktas su jau sugeneruotais failais stud1000.txt - stud10000000.txt.
 Kiekvienas procesas kartotas po 3 kartus. Failų generavimas į skaičiavimą neįtrauktas. Lentelėje pateiktas kiekvieno proceso vidurkis.
 
 Eiga:
@@ -17,11 +17,11 @@ Kompiliuota su `clang++ -std=c++17 -O2 -o programa *.cpp`
 ## \<vector\>
 | failas | studentų | skaitymas, s | skirstymas, s | rašymas, s | rūšiavimas, s | bendras laikas s |
 |---|---:|---:|---:|---:|---:|---:|
-| studentai1000.txt | 1000 | 0.0019629 | 0.0001115 | 0.0012659 | 0.0005125 | 0.0038528 |
-| studentai10000.txt | 10000 | 0.0100717 | 0.0005161 | 0.0023294 | 0.0037051 | 0.0166223 |
-| studentai100000.txt | 100000 | 0.058124 | 0.0037096 | 0.0204477 | 0.034671 | 0.116952 |
-| studentai1000000.txt | 1000000 | 0.592253 | 0.0546006 | 0.279484 | 0.440726 | 1.36706 |
-| studentai10000000.txt | 10000000 | 6.49013 | 0.629851 | 2.99189 | 5.94023 | 16.0521 |
+| stud1000.txt | 1000 | 0.0019629 | 0.0001115 | 0.0012659 | 0.0005125 | 0.0038528 |
+| stud10000.txt | 10000 | 0.0100717 | 0.0005161 | 0.0023294 | 0.0037051 | 0.0166223 |
+| stud100000.txt | 100000 | 0.058124 | 0.0037096 | 0.0204477 | 0.034671 | 0.116952 |
+| stud1000000.txt | 1000000 | 0.592253 | 0.0546006 | 0.279484 | 0.440726 | 1.36706 |
+| stud10000000.txt | 10000000 | 6.49013 | 0.629851 | 2.99189 | 5.94023 | 16.0521 |
 
 Bendras visų failų laikas 17,5566 s
 
@@ -34,11 +34,11 @@ Bendras visų failų laikas 17,5566 s
 ## \<list\>
 | failas | studentų | skaitymas, s | skirstymas, s | rašymas, s | rūšiavimas, s | bendras laikas s |
 |---|---:|---:|---:|---:|---:|---:|
-| studentai1000.txt | 1000 | 0.0019173 | 0.0001745 | 0.0035289 | 0.0002285 | 0.005849 |
-| studentai10000.txt | 10000 | 0.0106939 | 0.0013119 | 0.0026378 | 0.0032017 | 0.0178453 |
-| studentai100000.txt | 100000 | 0.0724235 | 0.0182655 | 0.041369 | 0.0445372 | 0.176595 |
-| studentai1000000.txt | 1000000 | 0.744151 | 0.230315 | 0.540531 | 0.991579 | 2.50658 |
-| studentai10000000.txt | 10000000 | 8.38451 | 2.81153 | 8.12095 | 16.0895 | 35.4065 |
+| stud1000.txt | 1000 | 0.0019173 | 0.0001745 | 0.0035289 | 0.0002285 | 0.005849 |
+| stud10000.txt | 10000 | 0.0106939 | 0.0013119 | 0.0026378 | 0.0032017 | 0.0178453 |
+| stud100000.txt | 100000 | 0.0724235 | 0.0182655 | 0.041369 | 0.0445372 | 0.176595 |
+| stud1000000.txt | 1000000 | 0.744151 | 0.230315 | 0.540531 | 0.991579 | 2.50658 |
+| stud10000000.txt | 10000000 | 8.38451 | 2.81153 | 8.12095 | 16.0895 | 35.4065 |
 
 Bendras visų failų laikas 38,1134 s
 

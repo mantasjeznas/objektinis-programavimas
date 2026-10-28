@@ -15,7 +15,7 @@ template <class Pazymiai>
 struct studentas {
     std::string vardas, pavarde;
     Pazymiai paz;
-    int exam;
+    int egz;
 };
 
 template <class Pazymiai>
@@ -40,25 +40,19 @@ double mediana(const studentas<Pazymiai> &A){
 
 template <class Pazymiai>
 double galutinis(const studentas<Pazymiai> &A, bool ar_mediana){
-    if (ar_mediana == true){
-        return 0.4 * mediana(A) + 0.6 * A.exam;
-    }
-    return 0.4 * vidurkis(A) + 0.6 * A.exam;
+    if (ar_mediana) return 0.4 * mediana(A) + 0.6 * A.egz;
+    return 0.4 * vidurkis(A) + 0.6 * A.egz;
 }
 
 template <class Pazymiai>
-void printas(std::ostream &out, const studentas<Pazymiai> &A, int pasirinkimas, int pavardes_ilgis, int vardo_ilgis){
+void isvesti_studenta(std::ostream &out, const studentas<Pazymiai> &A, int balo_tipas, int pavardes_ilgis, int vardo_ilgis){
     out << std::left << std::setw(pavardes_ilgis) << A.pavarde
-        << std::left << std::setw(vardo_ilgis) << A.vardas
+        << std::setw(vardo_ilgis) << A.vardas
         << std::fixed << std::setprecision(2);
 
-    if (pasirinkimas == 1){
-        out << galutinis(A, false) << "\n";
-    } else if (pasirinkimas == 2){
-        out << galutinis(A, true) << "\n";
-    } else{
-        out << std::left << std::setw(18) << galutinis(A, false) << galutinis(A, true) << "\n";
-    }
+    if (balo_tipas == 1) out << galutinis(A, false) << "\n";
+    else if (balo_tipas == 2) out << galutinis(A, true) << "\n";
+    else out << std::setw(18) << galutinis(A, false) << galutinis(A, true) << "\n";
 }
 
 template <class Pazymiai>
@@ -134,7 +128,7 @@ studentas<Pazymiai> ivesti_studenta(){
         for (int i = 0; i < k; i++){
             A.paz.push_back(random_pazymys());
         }
-        A.exam = random_pazymys();
+        A.egz = random_pazymys();
         ignoruoti_eilute();
     } else{
         std::string ivedimas;
@@ -172,15 +166,14 @@ studentas<Pazymiai> ivesti_studenta(){
             }
             for (int i = 0; i < k; i++){
                 std::cout << "Iveskite " << i + 1 << " paz: ";
-                int a = pazymio_apribojimas();
-                A.paz.push_back(a);
+                A.paz.push_back(pazymio_apribojimas());
             }
             if (k > 0) ignoruoti_eilute();
         }
 
-        std::cout<<"Iveskite semestro Egzamino paz.: "; A.exam = pazymio_apribojimas();
+        std::cout<<"Iveskite semestro Egzamino paz.: ";
+        A.egz = pazymio_apribojimas();
         ignoruoti_eilute();
-
     }
     return A;
 }
@@ -212,7 +205,7 @@ void strategija2(Konteineris &grupe, Konteineris &vargsiukai, bool ar_mediana){
 template <class Pazymiai>
 void strategija3(std::vector<studentas<Pazymiai>> &grupe, std::vector<studentas<Pazymiai>> &vargsiukai, bool ar_mediana){
     vargsiukai.clear();
-    auto it = grupe.begin();
+    auto it = grupe.end();
     if (ar_mediana) it = std::stable_partition(grupe.begin(), grupe.end(), kietiakas_med<Pazymiai>);
     else it = std::stable_partition(grupe.begin(), grupe.end(), kietiakas_vid<Pazymiai>);
     std::copy(it, grupe.end(), std::back_inserter(vargsiukai));
@@ -229,6 +222,12 @@ void strategija3(std::list<studentas<Pazymiai>> &grupe, std::list<studentas<Pazy
         if (galutinis(*it, ar_mediana) < 5.0) vargsiukai.splice(vargsiukai.end(), grupe, it);
         it = kitas;
     }
+}
+
+template <class Konteineris>
+void grazinti_vargsiukus(Konteineris &grupe, Konteineris &vargsiukai){
+    grupe.insert(grupe.end(), vargsiukai.begin(), vargsiukai.end());
+    vargsiukai.clear();
 }
 
 #endif
