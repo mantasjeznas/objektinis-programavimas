@@ -218,16 +218,20 @@ void greicio_analize_meniu(){
     std::cout << "\nKuri skirstymo strategija?\n"
     << "1 - kopijuoti i du naujus konteinerius\n"
     << "2 - perkelti vargsiukus ir istrinti is pradinio\n"
-    << "3 - perkelti vargsiukus is karto (vektoriui - stable_partition, o list - splice)\n";
-    int strategija = pasirinkimas_tarp(1, 3);
+    << "3 - perkelti vargsiukus is karto (vektoriui - stable_partition, o list - splice)\n"
+    << "4 - visas tris palyginti\n";
+    int strategija = pasirinkimas_tarp(1, 4);
     ignoruoti_eilute();
 
-    if (n > 1 && kiekis == n + 1) {
-        double bendras = 0;
-        for (int i = 0; i < n; i++) bendras += greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[i]], strategija);
-        std::cout << "\nBendras visu failu laikas: " << bendras << " s\n";
-    } else {
-        greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[kiekis - 1]], strategija);
+    for (int s = 1; s <= 3; s++) {
+        if (strategija != 4 && s != strategija) continue;
+        if (n > 1 && kiekis == n + 1) {
+            double bendras = 0;
+            for (int i = 0; i < n; i++) bendras += greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[i]], s);
+            std::cout << "\nBendras visu failu laikas (" << s << " strategija): " << bendras << " s\n";
+        } else {
+            greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[kiekis - 1]], s);
+        }
     }
 }
 
