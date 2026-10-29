@@ -249,12 +249,12 @@ void greicio_analize_meniu(){
     if (strategija == 4) {
         for (int s = 0; s < 3; s++) {
             std::cout << "\n=== STRATEGIJA-" << s + 1 << " ===\n";
-            std::cout << std::left << std::setw(14) << "Failas" << std::right << "|" << std::setw(11) << "Skaitymas" << " |" << std::setw(11) << "Skirstymas"
-            << " |" << std::setw(11) << "Rasymas" << " |" << std::setw(11) << "Rusiavimas" << " |" << std::setw(15) << "Bendras laikas" << "\n";
-            std::cout << "--------------+------------+------------+------------+------------+---------------\n";
+            std::cout << std::left << std::setw(17) << "Failas" << std::right;
+            std::cout << "|" << std::setw(12) << "Skaitymas" << " |" << std::setw(12) << "Skirstymas" << " |" << std::setw(12) << "Rasymas" << " |" << std::setw(12) << "Rusiavimas" << " |" << std::setw(15) << "Bendras laikas" << "\n";
+            std::cout << "-----------------+-------------+-------------+-------------+-------------+---------------\n";
             for (int i = pirmas; i <= paskutinis; i++) {
-                std::cout << std::left << std::setw(14) << failu_vardai[esami[i]] << std::right << std::fixed << std::setprecision(6);
-                for (int k = 0; k < 4; k++) std::cout << "|" << std::setw(11) << laikai[s][i][k] << " ";
+                std::cout << std::left << std::setw(17) << failu_vardai[esami[i]] << std::right << std::fixed << std::setprecision(6);
+                for (int k = 0; k < 4; k++) std::cout << "|" << std::setw(12) << laikai[s][i][k] << " ";
                 std::cout << "|" << std::setw(15) << laikai[s][i][4] << "\n" << std::defaultfloat << std::left;
             }
         }
