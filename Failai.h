@@ -119,7 +119,7 @@ void irasyti_kategorijas(Konteineris &vargsiukai, Konteineris &kietiakai, int ba
 void failu_generavimo_meniu();
 
 template <class Konteineris, class Pazymiai>
-double greicio_analize(const std::string &failo_pav, int strategija){
+double greicio_analize(const std::string &failo_pav, int strategija, double laikai[]){
     const int kartai = 3;
     Konteineris grupe;
     Konteineris kietiakai;
@@ -189,6 +189,11 @@ double greicio_analize(const std::string &failo_pav, int strategija){
      << std::setw(15) << "Rusiavimas" << "| " << t_rikiavimas / kartai << " s\n";
 
     double bendras = (t_skaitymas + t_skirstymas + t_rasymas + t_rikiavimas) / kartai;
+    laikai[0] = t_skaitymas / kartai;
+    laikai[1] = t_skirstymas / kartai;
+    laikai[2] = t_rasymas / kartai;
+    laikai[3] = t_rikiavimas / kartai;
+    laikai[4] = bendras;
     std::cout << std::setw(15) << "Bendras laikas" << "| " << bendras << " s\n";
     return bendras;
 }
@@ -224,14 +229,34 @@ void greicio_analize_meniu(){
     int strategija = pasirinkimas_tarp(1, 4);
     ignoruoti_eilute();
 
+    int pirmas = failo_nr - 1;
+    int paskutinis = failo_nr - 1;
+    if (failo_nr == n + 1) {
+        pirmas = 0;
+        paskutinis = n - 1;
+    }
+
+    double laikai[3][5][5] = {};
     for (int s = 1; s <= 3; s++) {
         if (strategija != 4 && s != strategija) continue;
-        if (failo_nr == n + 1) {
-            double bendras = 0;
-            for (int i = 0; i < n; i++) bendras += greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[i]], s);
-            std::cout << "\nBendras visu failu laikas (" << s << " strategija): " << bendras << " s\n";
-        } else {
-            greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[failo_nr - 1]], s);
+        double bendras = 0;
+        for (int i = pirmas; i <= paskutinis; i++) {
+            bendras += greicio_analize<Konteineris, Pazymiai>(failu_vardai[esami[i]], s, laikai[s - 1][i]);
+        }
+        if (pirmas != paskutinis) std::cout << "\nBendras visu failu laikas (" << s << " strategija): " << bendras << " s\n";
+    }
+
+    if (strategija == 4) {
+        for (int s = 0; s < 3; s++) {
+            std::cout << "\n=== STRATEGIJA-" << s + 1 << " ===\n";
+            std::cout << std::left << std::setw(14) << "Failas" << std::right << "|" << std::setw(11) << "Skaitymas" << " |" << std::setw(11) << "Skirstymas"
+            << " |" << std::setw(11) << "Rasymas" << " |" << std::setw(11) << "Rusiavimas" << " |" << std::setw(15) << "Bendras laikas" << "\n";
+            std::cout << "--------------+------------+------------+------------+------------+---------------\n";
+            for (int i = pirmas; i <= paskutinis; i++) {
+                std::cout << std::left << std::setw(14) << failu_vardai[esami[i]] << std::right << std::fixed << std::setprecision(6);
+                for (int k = 0; k < 4; k++) std::cout << "|" << std::setw(11) << laikai[s][i][k] << " ";
+                std::cout << "|" << std::setw(15) << laikai[s][i][4] << "\n" << std::defaultfloat << std::left;
+            }
         }
     }
 }
